@@ -209,53 +209,53 @@ public:
 	int			TotalAmmoCount			( void ) const;
 
 	// Attack
-	bool			PerformAttack				( idVec3& muzzleOrigin, idMat3& muzzleAxis, float dmgPower );
-	void			LaunchProjectiles			( idDict& dict, const idVec3& muzzleOrigin, const idMat3& muzzleAxis, int num_projectiles, float spread, float fuseOffset, float power );
-	void			Hitscan						( const idDict& dict, const idVec3& muzzleOrigin, const idMat3& muzzleAxis, int num_hitscans, float spread, float power );
-	void			AlertMonsters				( void );
+	bool				PerformAttack				( idVec3& muzzleOrigin, idMat3& muzzleAxis, float dmgPower );
+	void				LaunchProjectiles			( idDict& dict, const idVec3& muzzleOrigin, const idMat3& muzzleAxis, int num_projectiles, float spread, float fuseOffset, float power );
+	void				Hitscan						( const idDict& dict, const idVec3& muzzleOrigin, const idMat3& muzzleAxis, int num_hitscans, float spread, float power );
+	void				AlertMonsters				( void );
 
 	// Mods
-	int			GetMods						( void ) const;
+	int					GetMods						( void ) const;
 
 	// Zoom
 	idUserInterface*	GetZoomGui					( void ) const;
-	float			GetZoomTime					( void ) const;
-	int			GetZoomFov					( void ) const;
+	float				GetZoomTime					( void ) const;
+	int					GetZoomFov					( void ) const;
 
 	rvViewWeapon*		GetViewModel				( void ) const;
 	idAnimatedEntity*	GetWorldModel				( void ) const;
-	idPlayer*		GetOwner					( void ) const;
+	idPlayer*			GetOwner					( void ) const;
 	const char *		GetIcon						( void ) const;
 	renderLight_t&		GetLight					( int light );
 	const idAngles&		GetViewModelAngles			( void ) const;
 	const idVec3&		GetViewModelOffset			( void ) const;
 
- 	static void		CacheWeapon					( const char *weaponName );
-	static void		SkipFromSnapshot			( const idBitMsgDelta &msg );
+ 	static void			CacheWeapon					( const char *weaponName );
+	static void			SkipFromSnapshot			( const idBitMsgDelta &msg );
 
-	void			EnterCinematic				( void );
-	void			ExitCinematic				( void );
+	void				EnterCinematic				( void );
+	void				ExitCinematic				( void );
 
 protected:
 
 	virtual void		OnLaunchProjectile			( idProjectile* proj );
 
-	void			SetState					( const char *statename, int blendFrames );
-	void			PostState					( const char *statename, int blendFrames );
-	void			ExecuteState				( const char *statename );
+	void				SetState					( const char *statename, int blendFrames );
+	void				PostState					( const char *statename, int blendFrames );
+	void				ExecuteState				( const char *statename );
 
-	void			PlayAnim					( int channel, const char *animname, int blendFrames );
-	void			PlayCycle					( int channel, const char *animname, int blendFrames );
-	bool			AnimDone					( int channel, int blendFrames );
-	bool			StartSound					( const char *soundName, const s_channelType channel, int soundShaderFlags, bool broadcast, int *length );
-	void			StopSound					( const s_channelType channel, bool broadcast );
+	void				PlayAnim					( int channel, const char *animname, int blendFrames );
+	void				PlayCycle					( int channel, const char *animname, int blendFrames );
+	bool				AnimDone					( int channel, int blendFrames );
+	bool				StartSound					( const char *soundName, const s_channelType channel, int soundShaderFlags, bool broadcast, int *length );
+	void				StopSound					( const s_channelType channel, bool broadcast );
 	rvClientEffect*		PlayEffect					( const char* effectName, jointHandle_t joint, bool loop = false, const idVec3& endOrigin = vec3_origin, bool broadcast = false );
 
-	void			FindViewModelPositionStyle	( idVec3& viewOffset, idAngles& viewAngles ) const;
+	void				FindViewModelPositionStyle	( idVec3& viewOffset, idAngles& viewAngles ) const;
 
 public:
 
-	void			InitLights					( void );
+	void				InitLights					( void );
 	void				InitWorldModel				( void );
 	void				InitViewModel				( void );
 	void				InitDefs					( void );

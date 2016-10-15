@@ -3828,7 +3828,7 @@ idUserInterface* idMultiplayerGame::StartMenu( void ) {
 		mainGui->SetStateString( "chattext", "" );
 		mainGui->Activate( true, gameLocal.time );
 
-		idPlayer				*localP = gameLocal.GetLocalPlayer();
+                idPlayer		*localP = gameLocal.GetLocalPlayer();
 #ifndef _XENON
 		const idDeclEntityDef	*def = gameLocal.FindEntityDef( "player_marine_mp", false );
 #else

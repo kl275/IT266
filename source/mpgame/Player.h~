@@ -287,32 +287,22 @@ public:
 
 	class idPlayerView		playerView;			// handles damage kicks and effects
 
-	bool				alreadyDidTeamAnnouncerSound;
-	bool				noclip;
-	bool				godmode;
-	int				godmodeDamage;
-	bool				undying;
+	bool					alreadyDidTeamAnnouncerSound;
+	bool					noclip;
+	bool					godmode;
+	int						godmodeDamage;
+	bool					undying;
 
-	bool				spawnAnglesSet;		// on first usercmd, we must set deltaAngles
-	idAngles			spawnAngles;
-	idAngles			viewAngles;			// player view angles
-	idAngles			cmdAngles;			// player cmd angles
+	bool					spawnAnglesSet;		// on first usercmd, we must set deltaAngles
+	idAngles				spawnAngles;
+	idAngles				viewAngles;			// player view angles
+	idAngles				cmdAngles;			// player cmd angles
 
-	int				buttonMask;
-	int				oldButtons;
-	int				oldFlags;
+	int						buttonMask;
+	int						oldButtons;
+	int						oldFlags;
 
-	int				lastSavingThrowTime;	// for the "free miss" effect
-	
-	// begin kl275
-	typedef enum
-	{
-		STANDARD,
-		ASSAULT,
-		TANK,
-		ASSASSIN
-	} character_type;
-	// end kl275
+	int						lastSavingThrowTime;	// for the "free miss" effect
 
 	struct playerFlags_s {
 		bool		forward			:1;
@@ -340,16 +330,12 @@ public:
 	} pfl;
 		
 	// inventory
-	idInventory			inventory;
+	idInventory				inventory;
 
-	// kl275
-	character_type		char_type;
-	// end kl275
-
-	rvWeapon*			weapon;
-	idEntityPtr<rvViewWeapon>	weaponViewModel;
+	rvWeapon*						weapon;
+	idEntityPtr<rvViewWeapon>		weaponViewModel;
 	idEntityPtr<idAnimatedEntity>	weaponWorldModel;
-	const idDeclEntityDef*		weaponDef;
+	const idDeclEntityDef*			weaponDef;
 
 
  	idUserInterface *		hud;				// Common hud
@@ -357,18 +343,18 @@ public:
 	
 	idUserInterface *		objectiveSystem;
 	idUserInterface *		cinematicHud;
-	bool				objectiveSystemOpen;
-	bool				objectiveButtonReleased;
-	bool				disableHud;
-	bool				showNewObjectives;
+	bool					objectiveSystemOpen;
+	bool					objectiveButtonReleased;
+	bool					disableHud;
+	bool					showNewObjectives;
 
-	int				lastDmgTime;
-	int				deathClearContentsTime;
- 	bool				doingDeathSkin;
-	int				nextHealthPulse;	// time when health will tick down
-	int				nextAmmoRegenPulse[ MAX_AMMO ];	// time when ammo will regenerate
-	int				nextArmorPulse;		// time when armor will tick down
-	bool				hiddenWeapon;		// if the weapon is hidden ( in noWeapons maps )
+	int						lastDmgTime;
+	int						deathClearContentsTime;
+ 	bool					doingDeathSkin;
+	int						nextHealthPulse;	// time when health will tick down
+	int						nextAmmoRegenPulse[ MAX_AMMO ];	// time when ammo will regenerate
+	int						nextArmorPulse;		// time when armor will tick down
+	bool					hiddenWeapon;		// if the weapon is hidden ( in noWeapons maps )
 
 	// mp stuff
 	int						spectator;
@@ -436,12 +422,6 @@ public:
 	void					Spawn( void );
 	void					Think( void );
 
-	// kl275
-	character_type			get_Character_type(void);
-	void					reset_Character_Type(void);
-	void					set_Character_Type(character_type);
-	// end kl275
-	
 	// save games
 	void					Save( idSaveGame *savefile ) const;					// archives object for save game file
 	void					Restore( idRestoreGame *savefile );					// unarchives object from save game file

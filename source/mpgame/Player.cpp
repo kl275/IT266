@@ -46,13 +46,13 @@ bool g_ObjectiveSystemOpen = false;
 #endif
 
 // distance between ladder rungs (actually is half that distance, but this sounds better)
-const int LADDER_RUNG_DISTANCE = 32;
+const int       LADDER_RUNG_DISTANCE = 32;
 
 // amount of health per dose from the health station
-const int HEALTH_PER_DOSE = 10;
+const int       HEALTH_PER_DOSE = 10;
 
 // time before a weapon dropped to the floor disappears
-const int WEAPON_DROP_TIME = 20 * 1000;
+const int       WEAPON_DROP_TIME = 20 * 1000;
 
 // time before a next or prev weapon switch happens
 const int	WEAPON_SWITCH_DELAY		= 150;
@@ -63,7 +63,7 @@ const float	PLAYER_ITEM_DROP_SPEED	= 100.0f;
 const int SPECTATE_RAISE = 25;
 
 const int	HEALTH_PULSE		= 1000;			// Regen rate and heal leak rate (for health > 100)
-const int	ARMOR_PULSE			= 1000;			// armor ticking down due to being higher than maxarmor
+const int	ARMOR_PULSE		= 1000;			// armor ticking down due to being higher than maxarmor
 const int	AMMO_REGEN_PULSE	= 1000;			// ammo regen in Arena CTF
 const int	POWERUP_BLINKS		= 5;			// Number of times the powerup wear off sound plays
 const int	POWERUP_BLINK_TIME	= 1000;			// Time between powerup wear off sounds
@@ -71,8 +71,8 @@ const float MIN_BOB_SPEED		= 5.0f;			// minimum speed to bob and play run/walk a
 const int	MAX_RESPAWN_TIME	= 10000;
 const int	RAGDOLL_DEATH_TIME	= 3000;
 #ifdef _XENON
-	const int	RAGDOLL_DEATH_TIME_XEN_SP	= 1000;
-	const int	MAX_RESPAWN_TIME_XEN_SP	= 3000;
+const int	RAGDOLL_DEATH_TIME_XEN_SP	= 1000;
+const int	MAX_RESPAWN_TIME_XEN_SP	= 3000;
 #endif
 const int	STEPUP_TIME			= 200;
 const int	MAX_INVENTORY_ITEMS = 20;
@@ -1347,7 +1347,47 @@ idPlayer::idPlayer() {
 	prevOnGround = true;
 	clientIdealWeaponPredictFrame = -1;
 	serverReceiveEvent = false;
+	
+	// kl275
+	reset_Character_Type(void);
+	// end kl275
 }
+
+// Begin kl275
+/*
+==============
+idPlayer::get_Character_type
+==============
+*/
+
+	character_type	idPlayer::get_Character_type(void)
+	{
+		return idPlayer::character_type;
+	}
+
+/*
+==============
+idPlayer::reset_Character_Type
+==============
+*/
+
+	void	idPlayer::reset_Character_Type(void)
+	{
+		idPlayer::character_type = STANDARD;
+	}
+
+/*
+==============
+idPlayer::set_Character_Type
+==============
+*/
+
+	void	idPlayer::set_Character_Type(character_type type_selected)
+	{
+		idPlayer::character_type = type_selected;
+	}
+
+// End kl275
 
 /*
 ==============

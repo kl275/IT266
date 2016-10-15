@@ -11,22 +11,22 @@ public:
 
 	rvWeaponGrenadeLauncher ( void );
 
-	virtual void			Spawn				( void );
-	void					PreSave				( void );
-	void					PostSave			( void );
+        virtual void		Spawn		( void );
+        void			PreSave		( void );
+        void			PostSave	( void );
 
 #ifdef _XENON
-	virtual bool		AllowAutoAim			( void ) const { return false; }
+        virtual bool		AllowAutoAim	( void ) const { return false; }
 #endif
 
 private:
 
-	stateResult_t		State_Idle		( const stateParms_t& parms );
-	stateResult_t		State_Fire		( const stateParms_t& parms );
+        stateResult_t		State_Idle	( const stateParms_t& parms );
+        stateResult_t		State_Fire	( const stateParms_t& parms );
 	stateResult_t		State_Reload	( const stateParms_t& parms );
 
-	const char*			GetFireAnim() const { return (!AmmoInClip()) ? "fire_empty" : "fire"; }
-	const char*			GetIdleAnim() const { return (!AmmoInClip()) ? "idle_empty" : "idle"; }
+        const char*		GetFireAnim() const { return (!AmmoInClip()) ? "fire_empty" : "fire"; }
+        const char*		GetIdleAnim() const { return (!AmmoInClip()) ? "idle_empty" : "idle"; }
 	
 	CLASS_STATES_PROTOTYPE ( rvWeaponGrenadeLauncher );
 };
@@ -87,15 +87,20 @@ rvWeaponGrenadeLauncher::State_Idle
 ================
 */
 stateResult_t rvWeaponGrenadeLauncher::State_Idle( const stateParms_t& parms ) {
-	enum {
+        enum
+        {
 		STAGE_INIT,
 		STAGE_WAIT,
 	};	
-	switch ( parms.stage ) {
+        switch ( parms.stage )
+        {
 		case STAGE_INIT:
-			if ( !AmmoAvailable ( ) ) {
+                        if ( !AmmoAvailable ( ) )
+                        {
 				SetStatus ( WP_OUTOFAMMO );
-			} else {
+                        }
+                        else
+                        {
 				SetStatus ( WP_READY );
 			}
 		
@@ -103,22 +108,29 @@ stateResult_t rvWeaponGrenadeLauncher::State_Idle( const stateParms_t& parms ) {
 			return SRESULT_STAGE ( STAGE_WAIT );
 		
 		case STAGE_WAIT:			
-			if ( wsfl.lowerWeapon ) {
+                        if ( wsfl.lowerWeapon )
+                        {
 				SetState ( "Lower", 4 );
 				return SRESULT_DONE;
 			}		
-			if ( !clipSize ) {
-				if ( wsfl.attack && AmmoAvailable ( ) ) {
+                        if ( !clipSize )
+                        {
+                                if ( wsfl.attack && AmmoAvailable ( ) )
+                                {
 					SetState ( "Fire", 0 );
 					return SRESULT_DONE;
 				}
-			} else { 
-				if ( gameLocal.time > nextAttackTime && wsfl.attack && AmmoInClip ( ) ) {
+                        }
+                        else
+                        {
+                                if ( gameLocal.time > nextAttackTime && wsfl.attack && AmmoInClip ( ) )
+                                {
 					SetState ( "Fire", 0 );
 					return SRESULT_DONE;
 				}  
 						
-				if ( wsfl.attack && AutoReload() && !AmmoInClip ( ) && AmmoAvailable () ) {
+                                if ( wsfl.attack && AutoReload() && !AmmoInClip ( ) && AmmoAvailable () )
+                                {
 					SetState ( "Reload", 4 );
 					return SRESULT_DONE;			
 				}
@@ -137,12 +149,15 @@ stateResult_t rvWeaponGrenadeLauncher::State_Idle( const stateParms_t& parms ) {
 rvWeaponGrenadeLauncher::State_Fire
 ================
 */
-stateResult_t rvWeaponGrenadeLauncher::State_Fire ( const stateParms_t& parms ) {
-	enum {
+stateResult_t rvWeaponGrenadeLauncher::State_Fire ( const stateParms_t& parms )
+{
+        enum
+        {
 		STAGE_INIT,
 		STAGE_WAIT,
 	};	
-	switch ( parms.stage ) {
+        switch ( parms.stage )
+        {
 		case STAGE_INIT:
 			nextAttackTime = gameLocal.time + (fireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));
 			Attack ( false, 1, spread, 0, 1.0f );
@@ -150,11 +165,13 @@ stateResult_t rvWeaponGrenadeLauncher::State_Fire ( const stateParms_t& parms ) 
 			return SRESULT_STAGE ( STAGE_WAIT );
 	
 		case STAGE_WAIT:		
-			if ( wsfl.attack && gameLocal.time >= nextAttackTime && AmmoInClip() && !wsfl.lowerWeapon ) {
+                        if ( wsfl.attack && gameLocal.time >= nextAttackTime && AmmoInClip() && !wsfl.lowerWeapon )
+                        {
 				SetState ( "Fire", 0 );
 				return SRESULT_DONE;
 			}
-			if ( AnimDone ( ANIMCHANNEL_ALL, 0 ) ) {
+                        if ( AnimDone ( ANIMCHANNEL_ALL, 0 ) )
+                        {
 				SetState ( "Idle", 0 );
 				return SRESULT_DONE;
 			}		
@@ -168,16 +185,22 @@ stateResult_t rvWeaponGrenadeLauncher::State_Fire ( const stateParms_t& parms ) 
 rvWeaponGrenadeLauncher::State_Reload
 ================
 */
-stateResult_t rvWeaponGrenadeLauncher::State_Reload ( const stateParms_t& parms ) {
-	enum {
+stateResult_t rvWeaponGrenadeLauncher::State_Reload ( const stateParms_t& parms )
+{
+        enum
+        {
 		STAGE_INIT,
 		STAGE_WAIT,
 	};	
-	switch ( parms.stage ) {
+        switch ( parms.stage )
+        {
 		case STAGE_INIT:
-			if ( wsfl.netReload ) {
+                        if ( wsfl.netReload )
+                        {
 				wsfl.netReload = false;
-			} else {
+                        }
+                        else
+                        {
 				NetReload ( );
 			}
 			
@@ -186,12 +209,14 @@ stateResult_t rvWeaponGrenadeLauncher::State_Reload ( const stateParms_t& parms 
 			return SRESULT_STAGE ( STAGE_WAIT );
 			
 		case STAGE_WAIT:
-			if ( AnimDone ( ANIMCHANNEL_ALL, 4 ) ) {
+                        if ( AnimDone ( ANIMCHANNEL_ALL, 4 ) )
+                        {
 				AddToClip ( ClipSize() );
 				SetState ( "Idle", 4 );
 				return SRESULT_DONE;
 			}
-			if ( wsfl.lowerWeapon ) {
+                        if ( wsfl.lowerWeapon )
+                        {
 				SetState ( "Lower", 4 );
 				return SRESULT_DONE;
 			}
@@ -199,4 +224,3 @@ stateResult_t rvWeaponGrenadeLauncher::State_Reload ( const stateParms_t& parms 
 	}
 	return SRESULT_ERROR;
 }
-			
