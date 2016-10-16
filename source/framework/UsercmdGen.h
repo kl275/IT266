@@ -132,23 +132,23 @@ const int UCF_IMPULSE_SEQUENCE	= 0x0001;		// toggled every time an impulse comma
 
 class usercmd_t {
 public:
-	int			gameFrame;						// frame number
-	int			gameTime;						// game time
-	int			realTime;						// real game time
-	int			duplicateCount;					// duplication count for networking
+	int			gameFrame;		// frame number
+	int			gameTime;		// game time
+	int			realTime;		// real game time
+	int			duplicateCount;		// duplication count for networking
 // RAVEN BEGIN
 // ddynerman: expand buttons to 2 bytes
-	short		buttons;						// buttons
+	short		buttons;			// buttons
 // RAVEN END
-	signed char	forwardmove;					// forward/backward movement
-	signed char	rightmove;						// left/right movement
-	signed char	upmove;							// up/down movement
-	short		angles[3];						// view angles
-	short		mx;								// mouse delta x
-	short		my;								// mouse delta y
-	signed char impulse;						// impulse command
-	byte		flags;							// additional flags
-	int			sequence;						// just for debugging
+	signed char	forwardmove;			// forward/backward movement
+	signed char	rightmove;			// left/right movement
+	signed char	upmove;				// up/down movement
+	short		angles[3];			// view angles
+	short		mx;				// mouse delta x
+	short		my;				// mouse delta y
+	signed char impulse;				// impulse command
+	byte		flags;				// additional flags
+	int			sequence;		// just for debugging
 
 public:
 	void		ByteSwap();						// on big endian systems, byte swap the shorts and ints
