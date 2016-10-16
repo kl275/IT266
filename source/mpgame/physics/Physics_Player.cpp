@@ -1269,8 +1269,11 @@ bool idPhysics_Player::CheckJump( void ) {
 	// CheckJump only called from WalkMove, therefore with walking == true
 	// in MP game we always have groundPlane == walking
 	// (this mostly matters to velocity clipping against ground when the jump is ok'ed)
+	
+	/* kl275 
+		removed this to allow for double jumping
 	assert( groundPlane );
-
+	*/
 	if ( command.upmove < 10 ) {
 		// not holding jump
 		return false;
@@ -1286,25 +1289,53 @@ bool idPhysics_Player::CheckJump( void ) {
 		return false;
 	}
 
-	// start by setting up the normal ground slide velocity
-	// this will make sure that when we add the jump velocity we actually get off of the ground plane
-	if ( current.velocity * groundTrace.c.normal < 0.0f ) {
-		current.velocity = AdjustVertically( groundTrace.c.normal, current.velocity );
-	}
+	// kl275 start if for double jump
+	if ( current.movementFlags & PMF_STEPPED_UP )
+	{
+		// start by setting up the normal ground slide velocity
+		// this will make sure that when we add the jump velocity we actually get off of the ground plane
+		if ( current.velocity * groundTrace.c.normal < 0.0f )
+		{
+			current.velocity = AdjustVertically( groundTrace.c.normal, current.velocity );
+		}
 	
-	addVelocity = 2.0f * maxJumpHeight * -gravityVector;
-	addVelocity *= idMath::Sqrt( addVelocity.Normalize() );
-	current.velocity += addVelocity;
+		addVelocity = 2.0f * maxJumpHeight * -gravityVector;
+		addVelocity *= idMath::Sqrt( addVelocity.Normalize() );
+		current.velocity += addVelocity;
 
-	groundPlane = false;		// jumping away
-	walking = false;
-	groundEntityPtr = NULL;
-	current.movementFlags |= PMF_JUMP_HELD | PMF_JUMPED;
+		groundPlane = false;		// jumping away
+		walking = false;
+		groundEntityPtr = NULL;
+		current.movementFlags |= PMF_JUMP_HELD | PMF_JUMPED;
 
-	// crouch slide
-	current.crouchSlideTime = 0;
+		// crouch slide
+		current.crouchSlideTime = 0;
 
-	return true;
+		return true;
+	}
+	else
+	{
+		// start by setting up the normal ground slide velocity
+		// this will make sure that when we add the jump velocity we actually get off of the ground plane
+		if ( current.velocity * groundTrace.c.normal < 0.0f )
+		{
+			current.velocity = AdjustVertically( groundTrace.c.normal, current.velocity );
+		}
+	
+		addVelocity = 2.0f * maxJumpHeight * -gravityVector;
+		addVelocity *= idMath::Sqrt( addVelocity.Normalize() );
+		current.velocity += addVelocity;
+
+		groundPlane = false;		// jumping away
+		walking = false;
+		groundEntityPtr = NULL;
+		current.movementFlags |= PMF_JUMP_HELD | PMF_STEPPED_UP;
+
+		// crouch slide
+		current.crouchSlideTime = 0;
+
+		return true;
+	}
 }
 
 /*
@@ -1800,10 +1831,32 @@ idPhysics_Player::SetSpeed
 ================
 */
 void idPhysics_Player::SetSpeed( const float newWalkSpeed, const float newCrouchSpeed ) {
-	walkSpeed = newWalkSpeed;
-	crouchSpeed = newCrouchSpeed;
+	switch (idPlayer::character_type )
+		// kl275
+		case ASSAULT:
+		{
+			walkSpeed = (newWalkSpeed * 5);
+			crouchSpeed = (newCrouchSpeed * 5);
+			break;
+		}
+		case ASSASSIN:
+		{
+		walkSpeed = (newWalkSpeed * 3);
+		crouchSpeed = (newCrouchSpeed * 3);
+		break;
+		}
+		case TANK
+		{
+		walkSpeed = newWalkSpeed;
+		crouchSpeed = newCrouchSpeed;
+		break;
+		}
+		default:		// IE character type is standard
+		{
+		walkSpeed = (newWalkSpeed * 2);
+		crouchSpeed = (newCrouchSpeed * 2);
+		}
 }
-
 /*
 ================
 idPhysics_Player::SetMaxStepHeight
