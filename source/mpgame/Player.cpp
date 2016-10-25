@@ -6,6 +6,11 @@
 #include "../idlib/precompiled.h"
 #pragma hdrstop
 
+// kl275 begin
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* for random seed*/
+// end kl275
+
 #include "Game_local.h"
 
 #include "ai/AI.h"
@@ -1348,8 +1353,8 @@ idPlayer::idPlayer() {
 	clientIdealWeaponPredictFrame = -1;
 	serverReceiveEvent = false;
 	
-	// kl275
-	reset_Character_Type(void);
+        // begin kl275
+        set_Character_Type(void);
 	// end kl275
 }
 
@@ -1367,24 +1372,37 @@ idPlayer::get_Character_type
 
 /*
 ==============
-idPlayer::reset_Character_Type
-==============
-*/
-
-	void	idPlayer::reset_Character_Type(void)
-	{
-		idPlayer::character_type = STANDARD;
-	}
-
-/*
-==============
 idPlayer::set_Character_Type
 ==============
 */
-
-	void	idPlayer::set_Character_Type(character_type type_selected)
+        void	idPlayer::set_Character_Type()
 	{
-		idPlayer::character_type = type_selected;
+            srand(time(null));
+            int x = (rand() % 4);
+
+            switch (x)
+            {
+                case 0:
+                {
+                   this->idPlayer::character_type = STANDARD;
+                   break;
+                }
+                case 1:
+                {
+                    this->idPlayer::character_type = ASSAULT;
+                    break;
+                }
+                case 2:
+                {
+                    this->idPlayer::character_type = TANK;
+                    break;
+                }
+                case 3:
+                {
+                    this->idPlayer::character_type = ASSASSIN;
+                    break;
+                }
+            }
 	}
 
 // End kl275

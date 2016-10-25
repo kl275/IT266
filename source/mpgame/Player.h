@@ -343,7 +343,7 @@ public:
 	idInventory			inventory;
 
 	// kl275
-	character_type		char_type;
+	character_type			char_type;
 	// end kl275
 
 	rvWeapon*			weapon;
@@ -437,23 +437,23 @@ public:
 	void					Think( void );
 
 	// kl275
-	character_type			get_Character_type(void);
+	character_type				get_Character_type(void);
 	void					reset_Character_Type(void);
-	void					set_Character_Type(character_type);
+	void					set_Character_Type();
 	// end kl275
 	
 	// save games
 	void					Save( idSaveGame *savefile ) const;					// archives object for save game file
 	void					Restore( idRestoreGame *savefile );					// unarchives object from save game file
 
-	static const char*		GetSpawnClassname ( void );
+	static const char*			GetSpawnClassname ( void );
 
-	virtual void			Hide( void );
-	virtual void			Show( void );
+	virtual void				Hide( void );
+	virtual void				Show( void );
 
 	void					Init( void );
  	void					PrepareForRestart( void );
- 	virtual void			Restart( void );
+ 	virtual void				Restart( void );
 	void					SetWeapon ( int weapon );
 	void					SetupWeaponEntity( void );
 	bool					SelectSpawnPoint( idVec3 &origin, idAngles &angles );
@@ -483,7 +483,7 @@ public:
 							// delta view angles to allow movers to rotate the view of the player
 	void					UpdateDeltaViewAngles( const idAngles &angles );
 
-	virtual bool			Collide( const trace_t &collision, const idVec3 &velocity );
+	virtual bool				Collide( const trace_t &collision, const idVec3 &velocity );
 
  	virtual void			GetAASLocation( idAAS *aas, idVec3 &pos, int &areaNum ) const;
  	virtual void			DamageFeedback( idEntity *victim, idEntity *inflictor, int &damage );

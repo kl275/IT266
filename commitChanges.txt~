@@ -1,0 +1,23 @@
+All changes in files will be tracked here. In said files, I've marked the areas I've changed with a commented in signature of // kl275
+
+Commit 1:
+Created player types, get and set methods in MPP/player.h and MPP/player.cpp files
+
+Commit 2:
+Worked on doublejump in the physics.cpp file. October 16
+
+Commit 3:
+Added bools for electrocuted, onFire, and corrosive to mpgame/player.H, and add get/sets/resets for them
+
+Commit 4:
+Added pulses for fire, corroded.
+
+need to:
+Modify speeds for them
+Find out how to apply damage from weapons
+
+Modify weapons for that type of damage
+
+Player abilities?
+	healing?
+	?
