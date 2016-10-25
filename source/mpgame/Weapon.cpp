@@ -2190,7 +2190,8 @@ void rvWeapon::UpdateCrosshairGUI( idUserInterface* gui ) const {
 // cnicholson: Added support for universal crosshair
 
 	// COMMENTED OUT until Custom crosshair GUI is implemented.
-	if ( g_crosshairCustom.GetBool() ) {										// If there's a custom crosshair, use it.
+        if ( g_crosshairCustom.GetBool() )
+        {										// If there's a custom crosshair, use it.
 		gui->SetStateString( "crossImage", g_crosshairCustomFile.GetString());
 
 		const idMaterial *material = declManager->FindMaterial( g_crosshairCustomFile.GetString() );
@@ -2252,18 +2253,24 @@ rvWeapon::GetGlobalJointTransform
 This returns the offset and axis of a weapon bone in world space, suitable for attaching models or lights
 ================
 */
-bool rvWeapon::GetGlobalJointTransform ( bool view, const jointHandle_t jointHandle, idVec3 &origin, idMat3 &axis, const idVec3& offset ) {
-	if ( view) {
+bool rvWeapon::GetGlobalJointTransform ( bool view, const jointHandle_t jointHandle, idVec3 &origin, idMat3 &axis, const idVec3& offset )
+{
+        if ( view)
+        {
 		// view model
-		if ( viewModel && viewAnimator->GetJointTransform( jointHandle, gameLocal.time, origin, axis ) ) {
+                if ( viewModel && viewAnimator->GetJointTransform( jointHandle, gameLocal.time, origin, axis ) )
+                {
 			origin = offset * axis + origin;
 			origin = origin * ForeshortenAxis(viewModelAxis) + viewModelOrigin;
 			axis = axis * viewModelAxis;
 			return true;
 		}
-	} else {
+        }
+        else
+        {
 		// world model
-		if ( worldModel && worldAnimator->GetJointTransform( jointHandle, gameLocal.time, origin, axis ) ) {
+                if ( worldModel && worldAnimator->GetJointTransform( jointHandle, gameLocal.time, origin, axis ) )
+                {
 			origin = offset * axis + origin;
 			origin = worldModel->GetPhysics()->GetOrigin() + origin * worldModel->GetPhysics()->GetAxis();
 			axis = axis * worldModel->GetPhysics()->GetAxis();
@@ -2509,25 +2516,30 @@ void rvWeapon::Attack( bool altAttack, int num_attacks, float spread, float fuse
 	idVec3 muzzleOrigin;
 	idMat3 muzzleAxis;
 	
-	if ( !viewModel ) {
+        if ( !viewModel )
+        {
 		common->Warning( "NULL viewmodel %s\n", __FUNCTION__ );
 		return;
 	}
 	
-	if ( viewModel->IsHidden() ) {
+        if ( viewModel->IsHidden() )
+        {
 		return;
 	}
 
 	// avoid all ammo considerations on an MP client
-	if ( !gameLocal.isClient ) {
+        if ( !gameLocal.isClient )
+        {
 		// check if we're out of ammo or the clip is empty
 		int ammoAvail = owner->inventory.HasAmmo( ammoType, ammoRequired );
-		if ( !ammoAvail || ( ( clipSize != 0 ) && ( ammoClip <= 0 ) ) ) {
+                if ( !ammoAvail || ( ( clipSize != 0 ) && ( ammoClip <= 0 ) ) )
+                {
 			return;
 		}
 
 		owner->inventory.UseAmmo( ammoType, ammoRequired );
-		if ( clipSize && ammoRequired ) {
+                if ( clipSize && ammoRequired )
+                {
  			clipPredictTime = gameLocal.time;	// mp client: we predict this. mark time so we're not confused by snapshots
 			ammoClip -= 1;
 		}
@@ -2543,16 +2555,20 @@ void rvWeapon::Attack( bool altAttack, int num_attacks, float spread, float fuse
 	viewModel->SetShaderParm ( SHADERPARM_DIVERSITY, gameLocal.random.CRandomFloat() );
 	viewModel->SetShaderParm ( SHADERPARM_TIMEOFFSET, -MS2SEC( gameLocal.realClientTime ) );
 
-	if ( worldModel.GetEntity() ) {
+        if ( worldModel.GetEntity() )
+        {
 		worldModel->SetShaderParm( SHADERPARM_DIVERSITY, viewModel->GetRenderEntity()->shaderParms[ SHADERPARM_DIVERSITY ] );
 		worldModel->SetShaderParm( SHADERPARM_TIMEOFFSET, viewModel->GetRenderEntity()->shaderParms[ SHADERPARM_TIMEOFFSET ] );
 	}
 
 	// calculate the muzzle position
-	if ( barrelJointView != INVALID_JOINT && spawnArgs.GetBool( "launchFromBarrel" ) ) {
+        if ( barrelJointView != INVALID_JOINT && spawnArgs.GetBool( "launchFromBarrel" ) )
+        {
 		// there is an explicit joint for the muzzle
 		GetGlobalJointTransform( true, barrelJointView, muzzleOrigin, muzzleAxis );
-	} else {
+        }
+        else
+        {
 		// go straight out of the view
 		muzzleOrigin = playerViewOrigin;
 		muzzleAxis = playerViewAxis;		
@@ -2560,7 +2576,8 @@ void rvWeapon::Attack( bool altAttack, int num_attacks, float spread, float fuse
 	}
 
 	// add some to the kick time, incrementally moving repeat firing weapons back
-	if ( kick_endtime < gameLocal.realClientTime ) {
+        if ( kick_endtime < gameLocal.realClientTime )
+        {
 		kick_endtime = gameLocal.realClientTime;
 	}
 	kick_endtime += muzzle_kick_time;
@@ -2572,7 +2589,8 @@ void rvWeapon::Attack( bool altAttack, int num_attacks, float spread, float fuse
 	MuzzleFlash();
 
 	// quad damage overlays a sound
-	if ( owner->PowerUpActive( POWERUP_QUADDAMAGE ) ) {
+        if ( owner->PowerUpActive( POWERUP_QUADDAMAGE ) )
+        {
 		viewModel->StartSound( "snd_quaddamage", SND_CHANNEL_VOICE, 0, false, NULL );
 	}
 
@@ -2580,7 +2598,8 @@ void rvWeapon::Attack( bool altAttack, int num_attacks, float spread, float fuse
 	bool muzzleTint = spawnArgs.GetBool( "muzzleTint" );
 	viewModel->PlayEffect( "fx_muzzleflash", flashJointView, false, vec3_origin, false, false, EC_IGNORE, muzzleTint ? owner->GetHitscanTint() : vec4_one );
 
-	if ( worldModel && flashJointWorld != INVALID_JOINT ) {
+        if ( worldModel && flashJointWorld != INVALID_JOINT )
+        {
 		worldModel->PlayEffect( gameLocal.GetEffect( weaponDef->dict, "fx_muzzleflash_world" ), flashJointWorld, vec3_origin, mat3_identity, false, vec3_origin, false, false, EC_IGNORE, muzzleTint ? owner->GetHitscanTint() : vec4_one );
 	}
 
@@ -2588,22 +2607,27 @@ void rvWeapon::Attack( bool altAttack, int num_attacks, float spread, float fuse
 
 	// Inform the gui of the ammo change
 	viewModel->PostGUIEvent ( "weapon_ammo" );
-	if ( ammoClip == 0 && AmmoAvailable() == 0 ) {
+        if ( ammoClip == 0 && AmmoAvailable() == 0 )
+        {
 		viewModel->PostGUIEvent ( "weapon_noammo" );
 	}
 	
 	// The attack is either a hitscan or a launched projectile, do that now.
-	if ( !gameLocal.isClient ) {
+        if ( !gameLocal.isClient )
+        {
+                //kl275 This is where the hitscan/projectile shit works per weapon
 		idDict& dict = altAttack ? attackAltDict : attackDict;
 		power *= owner->PowerUpModifier( PMOD_PROJECTILE_DAMAGE );
-		if ( altAttack ? wfl.attackAltHitscan : wfl.attackHitscan ) {
+                if ( altAttack ? wfl.attackAltHitscan : wfl.attackHitscan )
+                {
 			Hitscan( dict, muzzleOrigin, muzzleAxis, num_attacks, spread, power );
-		} else {
+                }
+                else
+                {
 			LaunchProjectiles( dict, muzzleOrigin, muzzleAxis, num_attacks, spread, fuseOffset, power );
 		}
 		//asalmon:  changed to keep stats even in single player 
-		statManager->WeaponFired( owner, weaponIndex, num_attacks );
-		
+                statManager->WeaponFired( owner, weaponIndex, num_attacks );
 	}
 }
 
@@ -2614,18 +2638,20 @@ rvWeapon::LaunchProjectiles
 */
 void rvWeapon::LaunchProjectiles ( idDict& dict, const idVec3& muzzleOrigin, const idMat3& muzzleAxis, int num_projectiles, float spread, float fuseOffset, float power ) {
 	idProjectile*	proj;
-	idEntity*		ent;
-	int				i;
-	float			spreadRad;
-	idVec3			dir;
-	idBounds		ownerBounds;
+        idEntity*	ent;
+        int		i;
+        float		spreadRad;
+        idVec3		dir;
+        idBounds	ownerBounds;
 
-	if ( gameLocal.isClient ) {
+        if ( gameLocal.isClient )
+        {
 		return;
 	}
 	
 	// Let the AI know about the new attack
-	if ( !gameLocal.isMultiplayer ) {
+        if ( !gameLocal.isMultiplayer )
+        {
 		aiManager.ReactToPlayerAttack ( owner, muzzleOrigin, muzzleAxis[0] );
 	}
 		
@@ -2654,18 +2680,22 @@ void rvWeapon::LaunchProjectiles ( idDict& dict, const idVec3& muzzleOrigin, con
 
 		// If a projectile entity has already been created then use that one, otherwise
 		// spawn a new one based on the given dictionary
-		if ( projectileEnt ) {
+                if ( projectileEnt )
+                {
 			ent = projectileEnt;
 			ent->Show();
 			ent->Unbind();
 			projectileEnt = NULL;
-		} else {
+                }
+                else
+                {
 			dict.SetInt( "instance", owner->GetInstance() );
 			gameLocal.SpawnEntityDef( dict, &ent, false );
 		}
 
 		// Make sure it spawned
-		if ( !ent ) {
+                if ( !ent )
+                {
 			gameLocal.Error( "failed to spawn projectile for weapon '%s'", weaponDef->GetName ( ) );
 		}
 		
@@ -2678,7 +2708,8 @@ void rvWeapon::LaunchProjectiles ( idDict& dict, const idVec3& muzzleOrigin, con
 		projBounds = proj->GetPhysics()->GetBounds().Rotate( proj->GetPhysics()->GetAxis() );
 
 		// make sure the projectile starts inside the bounding box of the owner
-		if ( i == 0 ) {
+                if ( i == 0 )
+                {
 			idVec3  start;
 			float   distance;
 			trace_t	tr;
@@ -2751,8 +2782,8 @@ void rvWeapon::Hitscan( const idDict& dict, const idVec3& muzzleOrigin, const id
 
 	GetGlobalJointTransform( true, flashJointView, fxOrigin, fxAxis, dict.GetVector( "fxOriginOffset" ) );
 
-	if ( gameLocal.isServer ) {
-
+        if ( gameLocal.isServer )
+        {
 		assert( hitscanAttackDef >= 0 );
 		assert( owner && owner->entityNumber < MAX_CLIENTS );
 		int ownerId = owner ? owner->entityNumber : 0;
@@ -2772,22 +2803,30 @@ void rvWeapon::Hitscan( const idDict& dict, const idVec3& muzzleOrigin, const id
 
 	float spreadRad = DEG2RAD( spread );
 	idVec3 end;
-	for( i = 0; i < num_hitscans; i++ ) {
-		if( weaponDef->dict.GetBool( "machinegunSpreadStyle" ) ) {	
+        for( i = 0; i < num_hitscans; i++ )
+        {
+                if( weaponDef->dict.GetBool( "machinegunSpreadStyle" ) )
+                {
 			float r = gameLocal.random.RandomFloat() * idMath::PI * 2.0f;
 			float u = idMath::Sin( r ) * gameLocal.random.CRandomFloat() * spread * 16;
 			r = idMath::Cos( r ) * gameLocal.random.CRandomFloat() * spread * 16;
-#ifdef _XBOX
+
+                        #ifdef _XBOX
 			end = muzzleOrigin + ( ( 8192 * 16 ) * muzzleAxis[ 0 ] );
 			end += ( r * muzzleAxis[ 1 ] );
 			end += ( u * muzzleAxis[ 2 ] );
-#else
-			end = muzzleOrigin + ( ( 8192 * 16 ) * playerViewAxis[ 0 ] );
+                        #else
+
+                        end = muzzleOrigin + ( ( 8192 * 16 ) * playerViewAxis[ 0 ] );
 			end += ( r * playerViewAxis[ 1 ] );
 			end += ( u * playerViewAxis[ 2 ] );
-#endif
-			dir = end - muzzleOrigin;
-		} else if( weaponDef->dict.GetBool( "shotgunSpreadStyle" ) ) {
+                        #endif
+
+                        dir = end - muzzleOrigin;
+                }
+
+                else if( weaponDef->dict.GetBool( "shotgunSpreadStyle" ) )
+                {
 			int radius;
 			float angle;
 
@@ -2818,7 +2857,9 @@ void rvWeapon::Hitscan( const idDict& dict, const idVec3& muzzleOrigin, const id
 			end += ( u * playerViewAxis[ 2 ] );
 #endif
 			dir = end - muzzleOrigin;
-		} else {
+                }
+                else
+                {
 			ang = idMath::Sin( spreadRad * gameLocal.random.RandomFloat() );
 			spin = (float)DEG2RAD( 360.0f ) * gameLocal.random.RandomFloat();
 			//RAVEN BEGIN
@@ -2834,9 +2875,11 @@ void rvWeapon::Hitscan( const idDict& dict, const idVec3& muzzleOrigin, const id
 
 		gameLocal.HitScan( dict, muzzleOrigin, dir, fxOrigin, owner, false, 1.0f, NULL, areas );
 
-		if ( gameLocal.isServer ) {
+                if ( gameLocal.isServer )
+                {
 			msg.WriteDir( dir, 24 );
-			if ( i == num_hitscans - 1 ) {
+                        if ( i == num_hitscans - 1 )
+                        {
 				// NOTE: we emit to the areas of the last hitscan
 				// there is a remote possibility that multiple hitscans for shotgun would cover more than 2 areas,
 				// so in some rare case a client might miss it

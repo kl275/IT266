@@ -1,4 +1,4 @@
-// RAVEN BEGIN
+// RAVEN BEGI
 // bdube: note that this file is no longer merged with Doom3 updates
 //
 // MERGE_DATE 09/30/2004
@@ -66,6 +66,12 @@ const float	PLAYER_ITEM_DROP_SPEED	= 100.0f;
 
 // how many units to raise spectator above default view height so it's in the head of someone
 const int SPECTATE_RAISE = 25;
+
+// begin kl275
+const int	ON_FIRE_PULSE           	= 1000;			// Used for Status effects
+const int	PLAYER_BEING_CORRODED_PULSE	= 1000;
+const int	ARMOR_BEING_CORRODED_PULSE	= 2000;
+// end kl275
 
 const int	HEALTH_PULSE		= 1000;			// Regen rate and heal leak rate (for health > 100)
 const int	ARMOR_PULSE		= 1000;			// armor ticking down due to being higher than maxarmor
@@ -5025,12 +5031,15 @@ void idPlayer::UpdatePowerUps( void ) {
 	if ( gameLocal.time > nextHealthPulse ) {
 // RITUAL BEGIN
 // squirrel: health regen only applies if you have positive health
-		if( health > 0 ) {
-			if ( PowerUpActive ( POWERUP_REGENERATION ) || PowerUpActive ( POWERUP_GUARD ) ) {
+                if( health > 0 )
+                {
+                        if ( PowerUpActive ( POWERUP_REGENERATION ) || PowerUpActive ( POWERUP_GUARD ) )
+                        {
 				int healthBoundary = inventory.maxHealth; // health will regen faster under this value, slower above
 				int healthTic = 15;
 
-				if( PowerUpActive ( POWERUP_GUARD ) ) {
+                                if( PowerUpActive ( POWERUP_GUARD ) )
+                                {
 					// guard max health == 200, so set the boundary back to 100
 					healthBoundary = inventory.maxHealth / 2;
 					if( PowerUpActive (POWERUP_REGENERATION) ) {
@@ -5038,18 +5047,24 @@ void idPlayer::UpdatePowerUps( void ) {
 					}
 				}
 
-				if ( health < healthBoundary ) {
+                                if ( health < healthBoundary )
+                                {
 					// only actually give health on the server
-					if( gameLocal.isServer ) {
+                                        if( gameLocal.isServer )
+                                        {
 						health += healthTic;
-						if ( health > (healthBoundary * 1.1f) ) {
+                                                if ( health > (healthBoundary * 1.1f) )
+                                                {
 							health = healthBoundary * 1.1f;
 						}
 					}
 					StartSound ( "snd_powerup_regen", SND_CHANNEL_POWERUP, 0, false, NULL );
 					nextHealthPulse = gameLocal.time + HEALTH_PULSE;
-				} else if ( health < (healthBoundary * 2) ) {
-					if( gameLocal.isServer ) {
+                                }
+                                else if ( health < (healthBoundary * 2) )
+                                {
+                                        if( gameLocal.isServer )
+                                        {
 						health += healthTic / 3;
 						if ( health > (healthBoundary * 2) ) {
 							health = healthBoundary * 2;
@@ -5059,7 +5074,9 @@ void idPlayer::UpdatePowerUps( void ) {
 					nextHealthPulse = gameLocal.time + HEALTH_PULSE;
 				}	
 			// Health above max technically isnt a powerup but functions as one so handle it here
-			} else if ( health > inventory.maxHealth && gameLocal.isServer ) { 
+                        }
+                        else if ( health > inventory.maxHealth && gameLocal.isServer )
+                        {
 				nextHealthPulse = gameLocal.time + HEALTH_PULSE;
 				health--;
 			}

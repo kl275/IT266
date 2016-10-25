@@ -13,32 +13,32 @@ public:
 
 	rvWeaponBlaster ( void );
 
-	virtual void		Spawn				( void );
-	void				Save				( idSaveGame *savefile ) const;
-	void				Restore				( idRestoreGame *savefile );
-	void				PreSave		( void );
-	void				PostSave	( void );
+        virtual void		Spawn		( void );
+        void			Save		( idSaveGame *savefile ) const;
+        void			Restore		( idRestoreGame *savefile );
+        void			PreSave		( void );
+        void			PostSave	( void );
 
 protected:
 
-	bool				UpdateAttack		( void );
-	bool				UpdateFlashlight	( void );
-	void				Flashlight			( bool on );
+        bool			UpdateAttack		( void );
+        bool			UpdateFlashlight	( void );
+        void			Flashlight		( bool on );
 
 private:
 
-	int					chargeTime;
-	int					chargeDelay;
-	idVec2				chargeGlow;
-	bool				fireForced;
-	int					fireHeldTime;
+        int			chargeTime;
+        int			chargeDelay;
+        idVec2			chargeGlow;
+        bool			fireForced;
+        int			fireHeldTime;
 
-	stateResult_t		State_Raise				( const stateParms_t& parms );
-	stateResult_t		State_Lower				( const stateParms_t& parms );
-	stateResult_t		State_Idle				( const stateParms_t& parms );
+        stateResult_t		State_Raise			( const stateParms_t& parms );
+        stateResult_t		State_Lower			( const stateParms_t& parms );
+        stateResult_t		State_Idle			( const stateParms_t& parms );
 	stateResult_t		State_Charge			( const stateParms_t& parms );
 	stateResult_t		State_Charged			( const stateParms_t& parms );
-	stateResult_t		State_Fire				( const stateParms_t& parms );
+        stateResult_t		State_Fire			( const stateParms_t& parms );
 	stateResult_t		State_Flashlight		( const stateParms_t& parms );
 	
 	CLASS_STATES_PROTOTYPE ( rvWeaponBlaster );
@@ -74,13 +74,17 @@ bool rvWeaponBlaster::UpdateFlashlight ( void ) {
 rvWeaponBlaster::Flashlight
 ================
 */
-void rvWeaponBlaster::Flashlight ( bool on ) {
+void rvWeaponBlaster::Flashlight ( bool on )
+{
 	owner->Flashlight ( on );
 	
-	if ( on ) {
+        if ( on )
+        {
 		worldModel->ShowSurface ( "models/weapons/blaster/flare" );
 		viewModel->ShowSurface ( "models/weapons/blaster/flare" );
-	} else {
+        }
+        else
+        {
 		worldModel->HideSurface ( "models/weapons/blaster/flare" );
 		viewModel->HideSurface ( "models/weapons/blaster/flare" );
 	}
@@ -91,21 +95,28 @@ void rvWeaponBlaster::Flashlight ( bool on ) {
 rvWeaponBlaster::UpdateAttack
 ================
 */
-bool rvWeaponBlaster::UpdateAttack ( void ) {
+bool rvWeaponBlaster::UpdateAttack ( void )
+{
 	// Clear fire forced
-	if ( fireForced ) {
-		if ( !wsfl.attack ) {
+        if ( fireForced )
+        {
+                if ( !wsfl.attack )
+                {
 			fireForced = false;
-		} else {
+                }
+                else
+                {
 			return false;
 		}
 	}
 
 	// If the player is pressing the fire button and they have enough ammo for a shot
 	// then start the shooting process.
-	if ( wsfl.attack && gameLocal.time >= nextAttackTime ) {
+        if ( wsfl.attack && gameLocal.time >= nextAttackTime )
+        {
 		// Save the time which the fire button was pressed
-		if ( fireHeldTime == 0 ) {		
+                if ( fireHeldTime == 0 )
+                {
 			nextAttackTime = gameLocal.time + (fireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));
 			fireHeldTime   = gameLocal.time;
 			viewModel->SetShaderParm ( BLASTER_SPARM_CHARGEGLOW, chargeGlow[0] );
@@ -114,22 +125,29 @@ bool rvWeaponBlaster::UpdateAttack ( void ) {
 
 	// If they have the charge mod and they have overcome the initial charge 
 	// delay then transition to the charge state.
-	if ( fireHeldTime != 0 ) {
-		if ( gameLocal.time - fireHeldTime > chargeDelay ) {
+        if ( fireHeldTime != 0 )
+        {
+                if ( gameLocal.time - fireHeldTime > chargeDelay )
+                {
 			SetState ( "Charge", 4 );
 			return true;
 		}
 
 		// If the fire button was let go but was pressed at one point then 
 		// release the shot.
-		if ( !wsfl.attack ) {
+                if ( !wsfl.attack )
+                {
 			idPlayer * player = gameLocal.GetLocalPlayer();
-			if( player )	{
+                        if( player )
+                        {
 			
-				if( player->GuiActive())	{
+                                if( player->GuiActive())
+                                {
 					//make sure the player isn't looking at a gui first
 					SetState ( "Lower", 0 );
-				} else {
+                                }
+                                else
+                                {
 					SetState ( "Fire", 0 );
 				}
 			}
@@ -218,13 +236,13 @@ void rvWeaponBlaster::PostSave ( void ) {
 */
 
 CLASS_STATES_DECLARATION ( rvWeaponBlaster )
-	STATE ( "Raise",						rvWeaponBlaster::State_Raise )
-	STATE ( "Lower",						rvWeaponBlaster::State_Lower )
-	STATE ( "Idle",							rvWeaponBlaster::State_Idle)
-	STATE ( "Charge",						rvWeaponBlaster::State_Charge )
-	STATE ( "Charged",						rvWeaponBlaster::State_Charged )
-	STATE ( "Fire",							rvWeaponBlaster::State_Fire )
-	STATE ( "Flashlight",					rvWeaponBlaster::State_Flashlight )
+        STATE ( "Raise",	rvWeaponBlaster::State_Raise )
+        STATE ( "Lower",	rvWeaponBlaster::State_Lower )
+        STATE ( "Idle",		rvWeaponBlaster::State_Idle)
+        STATE ( "Charge",	rvWeaponBlaster::State_Charge )
+        STATE ( "Charged",	rvWeaponBlaster::State_Charged )
+        STATE ( "Fire",		rvWeaponBlaster::State_Fire )
+        STATE ( "Flashlight",	rvWeaponBlaster::State_Flashlight )
 END_CLASS_STATES
 
 /*
@@ -232,12 +250,15 @@ END_CLASS_STATES
 rvWeaponBlaster::State_Raise
 ================
 */
-stateResult_t rvWeaponBlaster::State_Raise( const stateParms_t& parms ) {
-	enum {
+stateResult_t rvWeaponBlaster::State_Raise( const stateParms_t& parms )
+{
+        enum
+        {
 		RAISE_INIT,
 		RAISE_WAIT,
 	};	
-	switch ( parms.stage ) {
+        switch ( parms.stage )
+        {
 		case RAISE_INIT:			
 			SetStatus ( WP_RISING );
 			PlayAnim( ANIMCHANNEL_ALL, "raise", parms.blendFrames );

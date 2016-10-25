@@ -312,6 +312,15 @@ public:
 		TANK,
 		ASSASSIN
 	} character_type;
+	character_type			char_type;
+
+	bool				playerIsOnFire = false;
+	bool				playerGettingCorroded = false;
+	bool				playerIsElectrocuted = false;
+	bool				playerIsOnFire = false;
+	bool				playerGettingCorroded = false;
+	bool				playerIsElectrocuted = false;
+
 	// end kl275
 
 	struct playerFlags_s {
@@ -341,11 +350,6 @@ public:
 		
 	// inventory
 	idInventory			inventory;
-
-	// kl275
-	character_type			char_type;
-	// end kl275
-
 	rvWeapon*			weapon;
 	idEntityPtr<rvViewWeapon>	weaponViewModel;
 	idEntityPtr<idAnimatedEntity>	weaponWorldModel;
@@ -440,6 +444,9 @@ public:
 	character_type				get_Character_type(void);
 	void					reset_Character_Type(void);
 	void					set_Character_Type();
+	bool					isPlayerOnFire();
+	bool					isPlayerGettingCorroded();
+	bool					isPlayerElectrocuted();
 	// end kl275
 	
 	// save games

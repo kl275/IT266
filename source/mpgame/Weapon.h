@@ -128,20 +128,20 @@ public:
 		EVENT_MAXEVENTS
 	};
 	
-	void				Init						( idPlayer* _owner, const idDeclEntityDef* def, int weaponIndex, bool isStrogg = false );
+        void				Init				( idPlayer* _owner, const idDeclEntityDef* def, int weaponIndex, bool isStrogg = false );
 
 	// Virtual overrides
-	void				Spawn						( void );
-	virtual void		Think						( void );
-	virtual void		CleanupWeapon				( void ) {}
-	virtual void		WriteToSnapshot				( idBitMsgDelta &msg ) const;
-	virtual void		ReadFromSnapshot			( const idBitMsgDelta &msg );
-	virtual bool		ClientReceiveEvent			( int event, int time, const idBitMsg &msg );
-	virtual void		ClientStale					( void );
-	virtual void		ClientUnstale				( void ) { }
-	virtual void		Attack						( bool altFire, int num_attacks, float spread, float fuseOffset, float power );
-	virtual void		GetDebugInfo				( debugInfoProc_t proc, void* userData );
-	virtual void		SpectatorCycle				( void ) { }
+        void				Spawn			( void );
+        virtual void		Think				( void );
+        virtual void		CleanupWeapon			( void ) {}
+        virtual void		WriteToSnapshot			( idBitMsgDelta &msg ) const;
+        virtual void		ReadFromSnapshot		( const idBitMsgDelta &msg );
+        virtual bool		ClientReceiveEvent		( int event, int time, const idBitMsg &msg );
+        virtual void		ClientStale			( void );
+        virtual void		ClientUnstale			( void ) { }
+        virtual void		Attack				( bool altFire, int num_attacks, float spread, float fuseOffset, float power );
+        virtual void		GetDebugInfo			( debugInfoProc_t proc, void* userData );
+        virtual void		SpectatorCycle			( void ) { }
 	virtual bool		NoFireWhileSwitching		( void ) const { return false; }
 
 	void				Save						( idSaveGame *savefile ) const;
@@ -355,22 +355,22 @@ public:
 	renderLight_t					lights[WPLIGHT_MAX];
 	int								lightHandles[WPLIGHT_MAX];
 	idVec3							guiLightOffset;	
-	int								muzzleFlashEnd;
-	int								muzzleFlashTime;
+        int							muzzleFlashEnd;
+        int							muzzleFlashTime;
 	idVec3							muzzleFlashViewOffset;
 	bool							flashlightOn;
 	idVec3							flashlightViewOffset;	
 
 	// ammo management
-	int								ammoType;
-	int								ammoRequired;		// amount of ammo to use each shot.  0 means weapon doesn't need ammo.
-	int								clipSize;			// 0 means no reload
-	int								ammoClip;
-	int								lowAmmo;			// if ammo in clip hits this threshold, snd_
-	int								maxAmmo;		
+        int							ammoType;
+        int							ammoRequired;		// amount of ammo to use each shot.  0 means weapon doesn't need ammo.
+        int							clipSize;			// 0 means no reload
+        int							ammoClip;
+        int							lowAmmo;			// if ammo in clip hits this threshold, snd_
+        int							maxAmmo;
 
  	// multiplayer
- 	int								clipPredictTime;
+        int							clipPredictTime;
 
 	// these are the player render view parms, which include bobbing
 	idVec3							playerViewOrigin;
@@ -384,7 +384,7 @@ public:
 	idVec3							viewModelOffset;
 
 	// weighting for viewmodel offsets 
-	int								weaponAngleOffsetAverages;
+        int							weaponAngleOffsetAverages;
 	float							weaponAngleOffsetScale;
 	float							weaponAngleOffsetMax;
 	float							weaponOffsetTime;
@@ -402,20 +402,20 @@ public:
 
 protected:
 
-	idEntityPtr<rvViewWeapon>		viewModel;
+        idEntityPtr<rvViewWeapon>                               viewModel;
 	idAnimator*						viewAnimator;
-	idEntityPtr<idAnimatedEntity>	worldModel;
+        idEntityPtr<idAnimatedEntity>                           worldModel;
 	idAnimator*						worldAnimator;
-	const idDeclEntityDef*			weaponDef;
-	idScriptObject*					scriptObject;
+        const idDeclEntityDef*                                  weaponDef;
+        idScriptObject*                                 	scriptObject;
 	idPlayer *						owner;
-	int								weaponIndex;
-	int								mods;
+        int							weaponIndex;
+        int							mods;
 
 	float							viewModelForeshorten;
 
-	rvStateThread					stateThread;
-	int								animDoneTime[ANIM_NumAnimChannels];
+        rvStateThread                                   	stateThread;
+        int							animDoneTime[ANIM_NumAnimChannels];
 
 private:
 
