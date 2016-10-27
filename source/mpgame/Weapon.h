@@ -24,6 +24,28 @@ typedef enum {
 	WP_FLASHLIGHT,
 } weaponStatus_t;
 
+// begin kl275
+typedef enum {
+	BLASTER,
+	MACHINEGUN,
+	SHOTGUN,
+	HYPERBLASTER,
+	GRENADELAUNCHER,
+	NAILGUN,
+	ROCKETLAUNCHER,
+	RAILGUN,
+	LIGHTNINGGUN,
+	DARKMATTERGUN,
+} weapons;
+
+typedef enum {
+	FIRE,
+	ACID,
+	ELECTRICAL,
+} statuseffects;
+
+// end kl275
+
 static const int MAX_WEAPONMODS	= 4;
 static const int MAX_AMMOTYPES	= 16;
 
@@ -156,71 +178,71 @@ public:
 	void				MuzzleRise					( idVec3 &origin, idMat3 &axis );
 	float				GetMuzzleFlashLightParm		( int parm );
 	void				SetMuzzleFlashLightParm		( int parm, float value );
-	void				GetAngleOffsets				( int *average, float *scale, float *max );
-	void				GetTimeOffsets				( float *time, float *scale );
+	void				GetAngleOffsets			( int *average, float *scale, float *max );
+	void				GetTimeOffsets			( float *time, float *scale );
 	bool				GetGlobalJointTransform		( bool viewModel, const jointHandle_t jointHandle, idVec3 &origin, idMat3 &axis, const idVec3& offset = vec3_origin );
 
 	// State control/player interface
-	void				LowerWeapon					( void );
-	void				RaiseWeapon					( void );
-	void				Raise						( void );
-	void				PutAway						( void );
-	void				Hide						( void );
-	void				Show						( void );
-	void				HideWorldModel				( void );
-	void				ShowWorldModel				( void );
-	void				SetFlashlight				( bool on = true );
-	void				Flashlight					( void );
-	void				SetPushVelocity				( const idVec3 &pushVelocity );
-	void				Reload						( void );
-	void				OwnerDied					( void );
-	void				BeginAttack					( void );
-	void				EndAttack					( void );
-	bool				IsReady						( void ) const;
-	bool				IsReloading					( void ) const;
-	bool				IsHolstered					( void ) const;
-	bool				ShowCrosshair				( void ) const;
-	bool				CanDrop						( void ) const;
-	bool				CanZoom						( void ) const;
-	void				CancelReload				( void );
-	void				SetStatus					( weaponStatus_t status );
-	bool				AutoReload					( void );
-	bool				IsHidden					( void ) const;
-	void				EjectBrass					( void );
+	void				LowerWeapon			( void );
+	void				RaiseWeapon			( void );
+	void				Raise				( void );
+	void				PutAway				( void );
+	void				Hide				( void );
+	void				Show				( void );
+	void				HideWorldModel			( void );
+	void				ShowWorldModel			( void );
+	void				SetFlashlight			( bool on = true );
+	void				Flashlight			( void );
+	void				SetPushVelocity			( const idVec3 &pushVelocity );
+	void				Reload				( void );
+	void				OwnerDied			( void );
+	void				BeginAttack			( void );
+	void				EndAttack			( void );
+	bool				IsReady				( void ) const;
+	bool				IsReloading			( void ) const;
+	bool				IsHolstered			( void ) const;
+	bool				ShowCrosshair			( void ) const;
+	bool				CanDrop				( void ) const;
+	bool				CanZoom				( void ) const;
+	void				CancelReload			( void );
+	void				SetStatus			( weaponStatus_t status );
+	bool				AutoReload			( void );
+	bool				IsHidden			( void ) const;
+	void				EjectBrass			( void );
 
 	// Network helpers
-	void				NetReload					( void );
+	void				NetReload				( void );
 	void				NetEndReload				( void );
-	void				NetCatchup					( void );
+	void				NetCatchup				( void );
 
 	// Ammo
 	static int			GetAmmoIndexForName			( const char *ammoname );
-	static const char*	GetAmmoNameForIndex			( int index );
-	int					GetAmmoType					( void ) const;
-	int					AmmoAvailable				( void ) const;
-	int					AmmoInClip					( void ) const;
+	static const char*		GetAmmoNameForIndex			( int index );
+	int				GetAmmoType				( void ) const;
+	int				AmmoAvailable				( void ) const;
+	int				AmmoInClip				( void ) const;
 	void				ResetAmmoClip				( void );
-	int					ClipSize					( void ) const;
-	int					LowAmmo						( void ) const;
-	int					AmmoRequired				( void ) const;
-	void				AddToClip					( int amount );
-	void				UseAmmo						( int amount );
-	void				SetClip						( int amount );
-	int					TotalAmmoCount				( void ) const;
+	int				ClipSize				( void ) const;
+	int				LowAmmo					( void ) const;
+	int				AmmoRequired				( void ) const;
+	void				AddToClip				( int amount );
+	void				UseAmmo					( int amount );
+	void				SetClip					( int amount );
+	int				TotalAmmoCount				( void ) const;
 
 	// Attack
-	bool				PerformAttack				( idVec3& muzzleOrigin, idMat3& muzzleAxis, float dmgPower );
-	void				LaunchProjectiles			( idDict& dict, const idVec3& muzzleOrigin, const idMat3& muzzleAxis, int num_projectiles, float spread, float fuseOffset, float power );
-	void				Hitscan						( const idDict& dict, const idVec3& muzzleOrigin, const idMat3& muzzleAxis, int num_hitscans, float spread, float power );
-	void				AlertMonsters				( void );
+	bool			PerformAttack				( idVec3& muzzleOrigin, idMat3& muzzleAxis, float dmgPower );
+	void			LaunchProjectiles			( idDict& dict, const idVec3& muzzleOrigin, const idMat3& muzzleAxis, int num_projectiles, float spread, float fuseOffset, float power );
+	void			Hitscan					( const idDict& dict, const idVec3& muzzleOrigin, const idMat3& muzzleAxis, int num_hitscans, float spread, float power );
+	void			AlertMonsters				( void );
 
 	// Mods
-	int					GetMods						( void ) const;
+	int			GetMods						( void ) const;
 
 	// Zoom
 	idUserInterface*	GetZoomGui					( void ) const;
-	float				GetZoomTime					( void ) const;
-	int					GetZoomFov					( void ) const;
+	float			GetZoomTime					( void ) const;
+	int			GetZoomFov					( void ) const;
 
 	rvViewWeapon*		GetViewModel				( void ) const;
 	idAnimatedEntity*	GetWorldModel				( void ) const;
@@ -311,63 +333,63 @@ public:
 	int								lastAttack;
 
 	// hiding weapon
-	int								hideTime;
- 	float							hideDistance;
- 	int								hideStartTime;
-	float							hideStart;
-	float							hideEnd;
-	float							hideOffset;
+	int						hideTime;
+ 	float						hideDistance;
+ 	int						hideStartTime;
+	float						hideStart;
+	float						hideEnd;
+	float						hideOffset;
 
 	// Attack
-	idVec3							pushVelocity;
-	int								kick_endtime;
-	int								muzzle_kick_time;
-	int								muzzle_kick_maxtime;
-	idAngles						muzzle_kick_angles;
-	idVec3							muzzle_kick_offset;
-	idVec3							muzzleOrigin;
-	idMat3							muzzleAxis;
-	float							muzzleOffset;
-	idEntityPtr<idEntity>			projectileEnt;
-	idVec3							ejectOffset;
+	idVec3						pushVelocity;
+	int						kick_endtime;
+	int						muzzle_kick_time;
+	int						muzzle_kick_maxtime;
+	idAngles					muzzle_kick_angles;
+	idVec3						muzzle_kick_offset;
+	idVec3						muzzleOrigin;
+	idMat3						muzzleAxis;
+	float						muzzleOffset;
+	idEntityPtr<idEntity>				projectileEnt;
+	idVec3						ejectOffset;
 
-	int								fireRate;
-	int								altFireRate;
-	float							spread;
-	int								nextAttackTime;
+	int						fireRate;
+	int						altFireRate;
+	float						spread;
+	int						nextAttackTime;
 
 	// we maintain local copies of the projectile and brass dictionaries so they
 	// do not have to be copied across the DLL boundary when entities are spawned
-	idDict							attackAltDict;
-	idDict							attackDict;
-	idDict							brassDict;
+	idDict						attackAltDict;
+	idDict						attackDict;
+	idDict						brassDict;
 
 	// Melee
-	const idDeclEntityDef *			meleeDef;
-	float							meleeDistance;
+	const idDeclEntityDef *				meleeDef;
+	float						meleeDistance;
 
 	// zoom
-    int								zoomFov;				// variable zoom fov per weapon (-1 is no zoom)
+	int						zoomFov;				// variable zoom fov per weapon (-1 is no zoom)
 	idUserInterface*				zoomGui;				// whether or not to overlay a zoom scope
-	float							zoomTime;				// time it takes to zoom in
+	float						zoomTime;				// time it takes to zoom in
 
 	// lights
 	renderLight_t					lights[WPLIGHT_MAX];
-	int								lightHandles[WPLIGHT_MAX];
-	idVec3							guiLightOffset;	
-        int							muzzleFlashEnd;
-        int							muzzleFlashTime;
-	idVec3							muzzleFlashViewOffset;
-	bool							flashlightOn;
-	idVec3							flashlightViewOffset;	
+	int						lightHandles[WPLIGHT_MAX];
+	idVec3						guiLightOffset;	
+        int						muzzleFlashEnd;
+        int						muzzleFlashTime;
+	idVec3						muzzleFlashViewOffset;
+	bool						flashlightOn;
+	idVec3						flashlightViewOffset;	
 
 	// ammo management
-        int							ammoType;
-        int							ammoRequired;		// amount of ammo to use each shot.  0 means weapon doesn't need ammo.
-        int							clipSize;			// 0 means no reload
-        int							ammoClip;
-        int							lowAmmo;			// if ammo in clip hits this threshold, snd_
-        int							maxAmmo;
+        int						ammoType;
+        int						ammoRequired;	// amount of ammo to use each shot. 0 means weapon doesn't need ammo.
+        int						clipSize;	// 0 means no reload
+        int						ammoClip;
+        int						lowAmmo;	// if ammo in clip hits this threshold, snd_
+        int						maxAmmo;
 
  	// multiplayer
         int							clipPredictTime;
@@ -419,8 +441,8 @@ protected:
 
 private:
 
-	stateResult_t			State_Raise				( const stateParms_t& parms );
-	stateResult_t			State_Lower				( const stateParms_t& parms );
+	stateResult_t			State_Raise			( const stateParms_t& parms );
+	stateResult_t			State_Lower			( const stateParms_t& parms );
 	stateResult_t			State_ExitCinematic		( const stateParms_t& parms );
 	stateResult_t			State_NetCatchup		( const stateParms_t& parms );
 

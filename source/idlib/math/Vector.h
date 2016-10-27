@@ -858,13 +858,15 @@ ID_INLINE float idVec3::LengthFast( void ) const {
 	return sqrLength * idMath::RSqrt( sqrLength );
 }
 
-ID_INLINE float idVec3::Normalize( void ) {
+ID_INLINE float idVec3::Normalize( void )
+{
 	float sqrLength, invLength;
 
 	sqrLength = x * x + y * y + z * z;
 // RAVEN BEGIN
 // jscott: fixed degenerate case
-	if ( !sqrLength ) {		
+        if ( !sqrLength )
+        {
 		return 0.0f;
 	}
 // RAVEN END

@@ -646,19 +646,19 @@ void rvWeapon::Spawn ( void ) {
 
 	// General weapon properties
 	wfl.silent_fire		= spawnArgs.GetBool( "silent_fire" );
-	wfl.hasWindupAnim   = spawnArgs.GetBool( "has_windup", "0" );
-	icon				= spawnArgs.GetString( "mtr_icon" );
- 	hideTime			= SEC2MS( weaponDef->dict.GetFloat( "hide_time", "0.3" ) );
+        wfl.hasWindupAnim       = spawnArgs.GetBool( "has_windup", "0" );
+        icon			= spawnArgs.GetString( "mtr_icon" );
+        hideTime		= SEC2MS( weaponDef->dict.GetFloat( "hide_time", "0.3" ) );
  	hideDistance		= weaponDef->dict.GetFloat( "hide_distance", "-15" );
  	hideStartTime		= gameLocal.time - hideTime;
  	muzzleOffset		= weaponDef->dict.GetFloat ( "muzzleOffset", "14" );
 
 	// Ammo
-	clipSize			= spawnArgs.GetInt( "clipSize" );
+        clipSize		= spawnArgs.GetInt( "clipSize" );
 	ammoRequired		= spawnArgs.GetInt( "ammoRequired" );
-	lowAmmo				= spawnArgs.GetInt( "lowAmmo" );
-	ammoType			= GetAmmoIndexForName( spawnArgs.GetString( "ammoType" ) );
-	maxAmmo				= owner->inventory.MaxAmmoForAmmoClass ( owner, GetAmmoNameForIndex ( ammoType ) );
+        lowAmmo			= spawnArgs.GetInt( "lowAmmo" );
+        ammoType		= GetAmmoIndexForName( spawnArgs.GetString( "ammoType" ) );
+        maxAmmo			= owner->inventory.MaxAmmoForAmmoClass ( owner, GetAmmoNameForIndex ( ammoType ) );
 	
 	if ( ( ammoType < 0 ) || ( ammoType >= MAX_AMMO ) ) {
 		gameLocal.Warning( "Unknown ammotype for class '%s'", this->GetClassname ( ) );
@@ -666,11 +666,13 @@ void rvWeapon::Spawn ( void ) {
 
 	// If the weapon has a clip, then fill it up
  	ammoClip = owner->inventory.clip[weaponIndex];
- 	if ( ( ammoClip < 0 ) || ( ammoClip > clipSize ) ) {
+        if ( ( ammoClip < 0 ) || ( ammoClip > clipSize ) )
+        {
  		// first time using this weapon so have it fully loaded to start
  		ammoClip = clipSize;
  		int ammoAvail = owner->inventory.HasAmmo( ammoType, ammoRequired );
- 		if ( ammoClip > ammoAvail ) {
+                if ( ammoClip > ammoAvail )
+                {
  			ammoClip = ammoAvail;
 		}
 	}
@@ -2512,7 +2514,8 @@ void rvWeapon::AddToClip ( int amount ) {
 rvWeapon::Attack
 ================
 */
-void rvWeapon::Attack( bool altAttack, int num_attacks, float spread, float fuseOffset, float power ) {
+void rvWeapon::Attack( bool altAttack, int num_attacks, float spread, float fuseOffset, float power )
+{
 	idVec3 muzzleOrigin;
 	idMat3 muzzleAxis;
 	
