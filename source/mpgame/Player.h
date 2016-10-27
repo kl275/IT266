@@ -317,9 +317,9 @@ public:
 	bool				playerIsOnFire = false;
 	bool				playerGettingCorroded = false;
 	bool				playerIsElectrocuted = false;
-	bool				playerIsOnFire = false;
-	bool				playerGettingCorroded = false;
-	bool				playerIsElectrocuted = false;
+	bool				playerIsOnFire():
+	bool				playerGettingCorroded():
+	bool				playerIsElectrocuted();
 
 	// end kl275
 
@@ -374,33 +374,39 @@ public:
 	int				nextArmorPulse;		// time when armor will tick down
 	bool				hiddenWeapon;		// if the weapon is hidden ( in noWeapons maps )
 
+	// begin kl275		Pulses for status effects.
+	int				nextFirePulse;
+	int				nextCorrodePulse;
+	int				nextElectricalPulse;
+	// end kl275	
+
 	// mp stuff
-	int						spectator;
+	int				spectator;
 
-	bool					scoreBoardOpen;
-	bool					forceScoreBoard;
-	bool					forceRespawn;
-	int						forceScoreBoardTime;
-	bool					allowedToRespawn;
-	bool					inBuyZone;
-	bool					inBuyZonePrev;
-	bool					spectating;
-	int						lastHitFrame;			// game frame of the last hit sound feedback
-	bool					lastHitArmor;
-	bool					forcedReady;
-	int						lastArenaChange;
+	bool				scoreBoardOpen;
+	bool				forceScoreBoard;
+	bool				forceRespawn;
+	int				forceScoreBoardTime;
+	bool				allowedToRespawn;
+	bool				inBuyZone;
+	bool				inBuyZonePrev;
+	bool				spectating;
+	int				lastHitFrame;			// game frame of the last hit sound feedback
+	bool				lastHitArmor;
+	bool				forcedReady;
+	int				lastArenaChange;
 	
-	bool					wantSpectate;			// from userInfo
+	bool				wantSpectate;			// from userInfo
 
- 	bool					weaponGone;				// force stop firing
- 	bool					useInitialSpawns;		// toggled by a map restart to be active for the first game spawn
- 	bool					isLagged;				// replicated from server, true if packets haven't been received from client.
- 	bool					isChatting;				// replicated from server, true if the player is chatting.
+ 	bool				weaponGone;				// force stop firing
+ 	bool				useInitialSpawns;		// toggled by a map restart to be active for the first game spawn
+ 	bool				isLagged;				// replicated from server, true if packets haven't been received from client.
+ 	bool				isChatting;				// replicated from server, true if the player is chatting.
 
-	int						lastSpectateTeleport;
-	int						latchedTeam;			// need to track when team gets changed
- 	int						spawnedTime;			// when client first enters the game
- 	int						hudTeam;
+	int				lastSpectateTeleport;
+	int				latchedTeam;			// need to track when team gets changed
+ 	int				spawnedTime;			// when client first enters the game
+ 	int				hudTeam;
 
  	idEntityPtr<idEntity>	teleportEntity;			// while being teleported, this is set to the entity we'll use for exit
 	int						teleportKiller;			// entity number of an entity killing us at teleporter exit
@@ -447,6 +453,7 @@ public:
 	bool					isPlayerOnFire();
 	bool					isPlayerGettingCorroded();
 	bool					isPlayerElectrocuted();
+	bool					resetPlayerStatusEffects();
 	// end kl275
 	
 	// save games

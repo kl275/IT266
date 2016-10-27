@@ -317,9 +317,9 @@ public:
 	bool				playerIsOnFire = false;
 	bool				playerGettingCorroded = false;
 	bool				playerIsElectrocuted = false;
-	bool				playerIsOnFire = false;
-	bool				playerGettingCorroded = false;
-	bool				playerIsElectrocuted = false;
+	bool				playerIsOnFire():
+	bool				playerGettingCorroded():
+	bool				playerIsElectrocuted();
 
 	// end kl275
 
@@ -373,6 +373,12 @@ public:
 	int				nextAmmoRegenPulse[ MAX_AMMO ];	// time when ammo will regenerate
 	int				nextArmorPulse;		// time when armor will tick down
 	bool				hiddenWeapon;		// if the weapon is hidden ( in noWeapons maps )
+
+	// begin kl275		Pulses for status effects.
+	int				nextFirePulse;
+	int				nextCorrodePulse;
+	int				nextElectricalPulse;
+	// end kl275	
 
 	// mp stuff
 	int						spectator;
@@ -444,6 +450,10 @@ public:
 	character_type				get_Character_type(void);
 	void					reset_Character_Type(void);
 	void					set_Character_Type();
+	bool					isPlayerOnFire();
+	bool					isPlayerGettingCorroded();
+	bool					isPlayerElectrocuted();
+	bool					resetPlayerStatusEffects();
 	// end kl275
 	
 	// save games

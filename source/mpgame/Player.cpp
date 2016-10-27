@@ -1088,6 +1088,8 @@ idPlayer::idPlayer
 idPlayer::idPlayer() {
 	memset( &usercmd, 0, sizeof( usercmd ) );
 
+        void idPlayer::resetPlayerStatusEffects()
+
 	alreadyDidTeamAnnouncerSound = false;
 
 	noclip					= false;
@@ -1191,24 +1193,24 @@ idPlayer::idPlayer() {
 	objectivesEnabled = true;
 // RAVEN END
 
-	skin					= NULL;
+        skin				= NULL;
 	weaponViewSkin			= NULL;
-	headSkin				= NULL;
-	powerUpSkin				= NULL;
+        headSkin			= NULL;
+        powerUpSkin			= NULL;
 
 	numProjectilesFired		= 0;
 	numProjectileHits		= 0;
 
-	airless					= false;
-	airTics					= 0;
+        airless				= false;
+        airTics				= 0;
 	lastAirDamage			= 0;
 
-	gibDeath				= false;
+        gibDeath			= false;
 	gibsLaunched			= false;
-	gibDir					= vec3_zero;
+        gibDir				= vec3_zero;
 
 	centerView.Init( 0, 0, 0, 0 );
-	fxFov					= false;
+        fxFov				= false;
 
 	influenceFov			= 0;
 	influenceActive			= 0;
@@ -1223,20 +1225,20 @@ idPlayer::idPlayer() {
 	memset( loggedAccel, 0, sizeof( loggedAccel ) );
 	currentLoggedAccel	= 0;
 
-	focusTime				= 0;
-	focusUI					= NULL;
-	focusEnt				= NULL;
-	focusType				= FOCUS_NONE;
+        focusTime			= 0;
+        focusUI				= NULL;
+        focusEnt			= NULL;
+        focusType			= FOCUS_NONE;
 	focusBrackets			= NULL;
 	focusBracketsTime		= 0;
 
-	talkingNPC				= NULL;
+        talkingNPC			= NULL;
 
-	cursor					= NULL;
- 	talkCursor				= 0;
+        cursor				= NULL;
+        talkCursor			= 0;
 	
-	oldMouseX				= 0;
-	oldMouseY				= 0;
+        oldMouseX			= 0;
+        oldMouseY			= 0;
 
 	lastDamageDef			= 0;
 	lastDamageDir			= vec3_zero;
@@ -1246,42 +1248,42 @@ idPlayer::idPlayer() {
 	predictedOrigin			= vec3_zero;
 	predictedAngles			= ang_zero;
 	predictedUpdated		= false;
-	predictionOriginError	= vec3_zero;
-	predictionAnglesError	= ang_zero;
+        predictionOriginError           = vec3_zero;
+        predictionAnglesError           = ang_zero;
 	predictionErrorTime		= 0;
 
 	fl.networkSync			= true;
 
-	latchedTeam				= -1;
-	hudTeam					= -1;
+        latchedTeam			= -1;
+        hudTeam				= -1;
  	doingDeathSkin			= false;
- 	weaponGone				= false;
+        weaponGone			= false;
  	useInitialSpawns		= false;
-	lastSpectateTeleport	= 0;
+        lastSpectateTeleport    	= 0;
 	hiddenWeapon			= false;
-	tipUp					= false;
-	objectiveUp				= false;
+        tipUp				= false;
+        objectiveUp			= false;
  	teleportEntity			= NULL;
 	teleportKiller			= -1;
-	lastKiller				= NULL;
+        lastKiller			= NULL;
 
- 	respawning				= false;
- 	ready					= false;
- 	leader					= false;
+        respawning			= false;
+        ready				= false;
+        leader				= false;
  	lastSpectateChange		= 0;
 	lastArenaChange			= 0;
- 	lastTeleFX				= -9999;
+        lastTeleFX			= -9999;
 
  	weaponCatchup			= false;
- 	lastSnapshotSequence	= 0;
+        lastSnapshotSequence    	= 0;
  
  	aimClientNum			= -1;
  
- 	spawnedTime				= 0;
+        spawnedTime			= 0;
  
  	isTelefragged			= false;
-	isLagged				= false;
- 	isChatting				= false;
+        isLagged			= false;
+        isChatting			= false;
 
 	intentDir.Zero();
 	aasSensor = rvAASTacticalSensor::CREATE_SENSOR(this);
@@ -1332,27 +1334,28 @@ idPlayer::idPlayer() {
 	lastPickupTime = 0;
 
 	int	i;
-	for ( i = 0; i < MAX_CONCURRENT_VOICES; i++ ) {
+        for ( i = 0; i < MAX_CONCURRENT_VOICES; i++ )
+        {
 		voiceDest[i] = -1;
 		voiceDestTimes[i] = 0;
 	}
 
 	itemCosts = NULL;
 
-	teamHealthRegen		= NULL;
-	teamHealthRegenPending	= false;
+        teamHealthRegen                 = NULL;
+        teamHealthRegenPending          = false;
 	teamAmmoRegen			= NULL;
-	teamAmmoRegenPending	= false;
+        teamAmmoRegenPending            = false;
 	teamDoubler			= NULL;		
 	teamDoublerPending		= false;
 
-	leanVelocity = vec3_zero;
-	leanMaxSpeed = 0.0f;
-	leanBlendRatio = 0.0f;
-	leanMaxLateralAngle = 0.0f;
-	leanMaxForwardAngle = 0.0f;
-	leanHeadRatio = 0.0f;
-	leanHipRatio = 0.0f;
+        leanVelocity                    = vec3_zero;
+        leanMaxSpeed                    = 0.0f;
+        leanBlendRatio                  = 0.0f;
+        leanMaxLateralAngle             = 0.0f;
+        leanMaxForwardAngle             = 0.0f;
+        leanHeadRatio                   = 0.0f;
+        leanHipRatio                    = 0.0f;
 
 	ignoreOnGroundUntilFrame = 0;
 	prevOnGround = true;
@@ -1361,10 +1364,51 @@ idPlayer::idPlayer() {
 	
         // begin kl275
         set_Character_Type(void);
+        resetPlayerStatusEffects();
 	// end kl275
 }
 
 // Begin kl275
+/*
+==============
+idPlayer::resetPlayerStatusEffects()
+==============
+*/
+void idPlayer::resetPlayerStatusEffects()
+{
+    this->playerIsOnFire = false;
+    this->playerGettingCorroded = false;
+    this->playerIsElectrocuted = false;
+}
+
+/*
+==============
+idPlayer::setPlayerOnFires()
+==============
+*/
+void idPlayer::setPlayerOnFires()
+{
+    this->playerIsOnFire = true;
+}
+/*
+==============
+idPlayer::corrodePlayer()
+==============
+*/
+void idPlayer::corrodePlayer()
+{
+    this->playerGettingCorroded = true;
+}
+/*
+==============
+idPlayer::electrocutePlayer()
+==============
+*/
+void idPlayer::electrocutePlayer()
+{
+    this->playerIsElectrocuted = true;
+}
+
 /*
 ==============
 idPlayer::get_Character_type
@@ -4983,7 +5027,8 @@ const char* idPlayer::GetArenaPowerupString ( void ) {
 idPlayer::UpdatePowerUps
 ==============
 */
-void idPlayer::UpdatePowerUps( void ) {
+void idPlayer::UpdatePowerUps( void )
+{
 	int i;
 	int wearoff = -1;
 	bool playWearoffSound = false;
@@ -4993,24 +5038,31 @@ void idPlayer::UpdatePowerUps( void ) {
 		playWearoffSound = true;
 	}
 
-	for ( i = 0; i < POWERUP_MAX; i++ ) {
+        for ( i = 0; i < POWERUP_MAX; i++ )
+        {
 		// Do we have this powerup?
-		if ( !(inventory.powerups & ( 1 << i ) ) ) {
+                if ( !(inventory.powerups & ( 1 << i ) ) )
+                {
 			continue;
 		}
 			
-		if ( inventory.powerupEndTime[i] > gameLocal.time || inventory.powerupEndTime[i] == -1 ) {
+                if ( inventory.powerupEndTime[i] > gameLocal.time || inventory.powerupEndTime[i] == -1 )
+                {
 			// If there is still time remaining on the powerup then update the hud		
-			if ( playWearoffSound ) {
+                        if ( playWearoffSound )
+                        {
 				// Play the wearoff sound for the powerup that is closest to wearing off
-				if ( ( wearoff == -1 || inventory.powerupEndTime[i] < inventory.powerupEndTime[wearoff] ) && inventory.powerupEndTime[i] != -1 ) {
+                                if ( ( wearoff == -1 || inventory.powerupEndTime[i] < inventory.powerupEndTime[wearoff] ) && inventory.powerupEndTime[i] != -1 )
+                                {
 					wearoff = i;
 				}
 			}
 			continue;
-		} else if ( inventory.powerupEndTime[ i ] != -1 && gameLocal.isServer ) {
+                }
+                else if ( inventory.powerupEndTime[ i ] != -1 && gameLocal.isServer )
+                {
 			// This particular powerup needs to respawn in a special way.
-			if ( i == POWERUP_DEADZONE ) {
+                        if ( i == POWERUP_DEADZONE ) {
 				gameLocal.mpGame.GetGameState()->SpawnDeadZonePowerup();
 			}
 			// Powerup time has run out so take it away from the player
@@ -5019,16 +5071,49 @@ void idPlayer::UpdatePowerUps( void ) {
 	}
 
 	// PLay wear off sound?
-	if ( gameLocal.isNewFrame && wearoff != -1 ) {
-		if ( (inventory.powerupEndTime[wearoff] - gameLocal.time) < POWERUP_BLINKS * POWERUP_BLINK_TIME ) {
-			if ( (inventory.powerupEndTime[wearoff] - gameLocal.time) / POWERUP_BLINK_TIME != ( inventory.powerupEndTime[wearoff] - gameLocal.previousTime ) / POWERUP_BLINK_TIME ) {
+        if ( gameLocal.isNewFrame && wearoff != -1 )
+        {
+                if ( (inventory.powerupEndTime[wearoff] - gameLocal.time) < POWERUP_BLINKS * POWERUP_BLINK_TIME )
+                {
+                        if ( (inventory.powerupEndTime[wearoff] - gameLocal.time) / POWERUP_BLINK_TIME != ( inventory.powerupEndTime[wearoff] - gameLocal.previousTime ) / POWERUP_BLINK_TIME )
+                        {
 				StartSound ( "snd_powerup_wearoff", SND_CHANNEL_POWERUP, 0, false, NULL );
 			}
 		}
-	}
+        }
+
+        // begin kl275
+        if (health > 0)
+        {
+            if (gameLocal.time > nextFirePulse)
+            {
+                if( (health > 0) && (this->playerIsOnFire()))
+                {
+                nextFirePulse = gameLocal.time + ON_FIRE_PULSE;
+                health--;
+                }
+            }
+
+            if (nextCorrodePulse < gameLocal.time)
+            {
+                if(( inventory.armor > 0)  && (this->playerGettingCorroded() ) )
+                {
+                        nextCorrodePulse= gameLocal.time + ARMOR_BEING_CORRODED_PULSE;
+                        inventory.armor--;
+                }
+                else
+                {
+                        nextCorrodePulse= gameLocal.time + PLAYER_BEING_CORRODED_PULSE;
+                        health--;
+                }
+            }
+        }
+
+        // end kl275
 
 	// Reneration regnerates faster when less than maxHealth and can regenerate up to maxHealth * 2
-	if ( gameLocal.time > nextHealthPulse ) {
+        if ( gameLocal.time > nextHealthPulse )
+        {
 // RITUAL BEGIN
 // squirrel: health regen only applies if you have positive health
                 if( health > 0 )
@@ -5157,25 +5242,33 @@ void idPlayer::UpdatePowerUps( void ) {
 		}
 
 		renderEntity.overlayShader = powerUpOverlay;
-	} else {
+        }
+        else
+        {
 		renderEntity.overlayShader = NULL;
 		powerUpOverlay = NULL;
 
-		if( clientHead ) {
+                if( clientHead )
+                {
 			clientHead->GetRenderEntity()->overlayShader = NULL;
 		}
 
-		if ( renderEntity.customSkin != gibSkin ) {
-			if ( influenceSkin ) {
+                if ( renderEntity.customSkin != gibSkin )
+                {
+                        if ( influenceSkin )
+                        {
 				renderEntity.customSkin = influenceSkin;
-			} else {
+                        }
+                        else
+                        {
 				renderEntity.customSkin = skin;
 			}
 		}
 	}
 
 	// Spawn quad effect
-	if( PowerUpActive( powerupEffectType ) && powerupEffect && gameLocal.time >= powerupEffectTime  ) {
+        if( PowerUpActive( powerupEffectType ) && powerupEffect && gameLocal.time >= powerupEffectTime  )
+        {
 		rvClientCrawlEffect* effect = new rvClientCrawlEffect( powerupEffect, this, 100, &powerupEffectJoints );
 		effect->Play ( gameLocal.time, false );					
 		effect->GetRenderEffect()->suppressSurfaceInViewID = entityNumber+1;
@@ -5183,15 +5276,18 @@ void idPlayer::UpdatePowerUps( void ) {
 	}
 	
 	// Attenuate haste effect
-	if ( hasteEffect ) {
+        if ( hasteEffect )
+        {
 		hasteEffect->Attenuate( idMath::ClampFloat( 0.0f, 1.0f, physicsObj.GetLinearVelocity().LengthSqr() / Square(100.0f) ) );
 	}
 
-	if ( flagEffect ) {
+        if ( flagEffect )
+        {
 		flagEffect->Attenuate( idMath::ClampFloat( 0.0f, 1.0f, physicsObj.GetLinearVelocity().LengthSqr() / Square(100.0f) ) );
 	}
 
-	if( arenaEffect ) {
+        if( arenaEffect )
+        {
 		arenaEffect->SetOrigin( vec3_zero );
 	}
 }
@@ -6937,9 +7033,12 @@ void idPlayer::UpdateFocus( void ) {
 					}
 				}					
 
-				if ( gameLocal.isServer ) {
+                                if ( gameLocal.isServer )
+                                {
 					ent = ent->spawnNode.Next();
-				} else {
+                                }
+                                else
+                                {
 					ent = ent->snapshotNode.Next();
 				}
 			}
