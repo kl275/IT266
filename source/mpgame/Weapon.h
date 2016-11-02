@@ -39,6 +39,7 @@ typedef enum {
 } weapons;
 
 typedef enum {
+	NONE,
 	FIRE,
 	ACID,
 	ELECTRICAL,
@@ -153,7 +154,7 @@ public:
         void				Init				( idPlayer* _owner, const idDeclEntityDef* def, int weaponIndex, bool isStrogg = false );
 
 	// Virtual overrides
-        void				Spawn			( void );
+        void			Spawn				( void );
         virtual void		Think				( void );
         virtual void		CleanupWeapon			( void ) {}
         virtual void		WriteToSnapshot			( idBitMsgDelta &msg ) const;
@@ -161,158 +162,161 @@ public:
         virtual bool		ClientReceiveEvent		( int event, int time, const idBitMsg &msg );
         virtual void		ClientStale			( void );
         virtual void		ClientUnstale			( void ) { }
-        virtual void		Attack				( bool altFire, int num_attacks, float spread, float fuseOffset, float power );
+        virtual void		Attack				( bool altFire, int num_attacks, float spread, float fuseOffset, float power, weaponUsed weapon, character_type charType );
         virtual void		GetDebugInfo			( debugInfoProc_t proc, void* userData );
         virtual void		SpectatorCycle			( void ) { }
 	virtual bool		NoFireWhileSwitching		( void ) const { return false; }
 
-	void				Save						( idSaveGame *savefile ) const;
-	void				Restore						( idRestoreGame *savefile );
-	virtual void		PreSave						( void );
-	virtual void		PostSave					( void );
+	void			Save				( idSaveGame *savefile ) const;
+	void			Restore				( idRestoreGame *savefile );
+	virtual void		PreSave				( void );
+	virtual void		PostSave			( void );
 
 
 	// Visual presentation
-	bool				BloodSplat					( float size );
-	void				MuzzleFlash					( void );
-	void				MuzzleRise					( idVec3 &origin, idMat3 &axis );
-	float				GetMuzzleFlashLightParm		( int parm );
-	void				SetMuzzleFlashLightParm		( int parm, float value );
-	void				GetAngleOffsets			( int *average, float *scale, float *max );
-	void				GetTimeOffsets			( float *time, float *scale );
-	bool				GetGlobalJointTransform		( bool viewModel, const jointHandle_t jointHandle, idVec3 &origin, idMat3 &axis, const idVec3& offset = vec3_origin );
+	bool			BloodSplat			( float size );
+	void			MuzzleFlash			( void );
+	void			MuzzleRise			( idVec3 &origin, idMat3 &axis );
+	float			GetMuzzleFlashLightParm		( int parm );
+	void			SetMuzzleFlashLightParm		( int parm, float value );
+	void			GetAngleOffsets			( int *average, float *scale, float *max );
+	void			GetTimeOffsets			( float *time, float *scale );
+	bool			GetGlobalJointTransform		( bool viewModel, const jointHandle_t jointHandle, idVec3 &origin, idMat3 &axis, const idVec3& offset = vec3_origin );
 
 	// State control/player interface
-	void				LowerWeapon			( void );
-	void				RaiseWeapon			( void );
-	void				Raise				( void );
-	void				PutAway				( void );
-	void				Hide				( void );
-	void				Show				( void );
-	void				HideWorldModel			( void );
-	void				ShowWorldModel			( void );
-	void				SetFlashlight			( bool on = true );
-	void				Flashlight			( void );
-	void				SetPushVelocity			( const idVec3 &pushVelocity );
-	void				Reload				( void );
-	void				OwnerDied			( void );
-	void				BeginAttack			( void );
-	void				EndAttack			( void );
-	bool				IsReady				( void ) const;
-	bool				IsReloading			( void ) const;
-	bool				IsHolstered			( void ) const;
-	bool				ShowCrosshair			( void ) const;
-	bool				CanDrop				( void ) const;
-	bool				CanZoom				( void ) const;
-	void				CancelReload			( void );
-	void				SetStatus			( weaponStatus_t status );
-	bool				AutoReload			( void );
-	bool				IsHidden			( void ) const;
-	void				EjectBrass			( void );
+	void			LowerWeapon			( void );
+	void			RaiseWeapon			( void );
+	void			Raise				( void );
+	void			PutAway				( void );
+	void			Hide				( void );
+	void			Show				( void );
+	void			HideWorldModel			( void );
+	void			ShowWorldModel			( void );
+	void			SetFlashlight			( bool on = true );
+	void			Flashlight			( void );
+	void			SetPushVelocity			( const idVec3 &pushVelocity );
+	void			Reload				( void );
+	void			OwnerDied			( void );
+	void			BeginAttack			( void );
+	void			EndAttack			( void );
+	bool			IsReady				( void ) const;
+	bool			IsReloading			( void ) const;
+	bool			IsHolstered			( void ) const;
+	bool			ShowCrosshair			( void ) const;
+	bool			CanDrop				( void ) const;
+	bool			CanZoom				( void ) const;
+	void			CancelReload			( void );
+	void			SetStatus			( weaponStatus_t status );
+	bool			AutoReload			( void );
+	bool			IsHidden			( void ) const;
+	void			EjectBrass			( void );
 
 	// Network helpers
-	void				NetReload				( void );
-	void				NetEndReload				( void );
-	void				NetCatchup				( void );
+	void			NetReload				( void );
+	void			NetEndReload				( void );
+	void			NetCatchup				( void );
 
 	// Ammo
-	static int			GetAmmoIndexForName			( const char *ammoname );
-	static const char*		GetAmmoNameForIndex			( int index );
-	int				GetAmmoType				( void ) const;
-	int				AmmoAvailable				( void ) const;
-	int				AmmoInClip				( void ) const;
-	void				ResetAmmoClip				( void );
-	int				ClipSize				( void ) const;
-	int				LowAmmo					( void ) const;
-	int				AmmoRequired				( void ) const;
-	void				AddToClip				( int amount );
-	void				UseAmmo					( int amount );
-	void				SetClip					( int amount );
-	int				TotalAmmoCount				( void ) const;
+	static int		GetAmmoIndexForName			( const char *ammoname );
+	static const char*	GetAmmoNameForIndex			( int index );
+	int			GetAmmoType				( void ) const;
+	int			AmmoAvailable				( void ) const;
+	int			AmmoInClip				( void ) const;
+	void			ResetAmmoClip				( void );
+	int			ClipSize				( void ) const;
+	int			LowAmmo					( void ) const;
+	int			AmmoRequired				( void ) const;
+	void			AddToClip				( int amount );
+	void			UseAmmo					( int amount );
+	void			SetClip					( int amount );
+	int			TotalAmmoCount				( void ) const;
 
 	// Attack
 	bool			PerformAttack				( idVec3& muzzleOrigin, idMat3& muzzleAxis, float dmgPower );
-	void			LaunchProjectiles			( idDict& dict, const idVec3& muzzleOrigin, const idMat3& muzzleAxis, int num_projectiles, float spread, float fuseOffset, float power );
-	void			Hitscan					( const idDict& dict, const idVec3& muzzleOrigin, const idMat3& muzzleAxis, int num_hitscans, float spread, float power );
+	void			LaunchProjectiles			( idDict& dict, const idVec3& muzzleOrigin, const idMat3& muzzleAxis,
+									int num_projectiles, float spread, float fuseOffset, float power, weaponUsed weapon, character_type charType );
+
+	void			Hitscan					( const idDict& dict, const idVec3& muzzleOrigin,
+									const idMat3& muzzleAxis, int num_hitscans, float spread, float power, weaponUsed weapon, character_type charType );
 	void			AlertMonsters				( void );
 
 	// Mods
-	int			GetMods						( void ) const;
+	int			GetMods					( void ) const;
 
 	// Zoom
-	idUserInterface*	GetZoomGui					( void ) const;
-	float			GetZoomTime					( void ) const;
-	int			GetZoomFov					( void ) const;
+	idUserInterface*	GetZoomGui				( void ) const;
+	float			GetZoomTime				( void ) const;
+	int			GetZoomFov				( void ) const;
 
 	rvViewWeapon*		GetViewModel				( void ) const;
 	idAnimatedEntity*	GetWorldModel				( void ) const;
 	idPlayer*			GetOwner					( void ) const;
 	const char *		GetIcon						( void ) const;
-	renderLight_t&		GetLight					( int light );
+	renderLight_t&		GetLight				( int light );
 	const idAngles&		GetViewModelAngles			( void ) const;
 	const idVec3&		GetViewModelOffset			( void ) const;
 
- 	static void			CacheWeapon					( const char *weaponName );
-	static void			SkipFromSnapshot			( const idBitMsgDelta &msg );
+ 	static void		CacheWeapon				( const char *weaponName );
+	static void		SkipFromSnapshot			( const idBitMsgDelta &msg );
 
-	void				EnterCinematic				( void );
-	void				ExitCinematic				( void );
+	void			EnterCinematic				( void );
+	void			ExitCinematic				( void );
 
 protected:
 
 	virtual void		OnLaunchProjectile			( idProjectile* proj );
 
-	void				SetState					( const char *statename, int blendFrames );
-	void				PostState					( const char *statename, int blendFrames );
-	void				ExecuteState				( const char *statename );
+	void			SetState				( const char *statename, int blendFrames );
+	void			PostState				( const char *statename, int blendFrames );
+	void			ExecuteState				( const char *statename );
 
-	void				PlayAnim					( int channel, const char *animname, int blendFrames );
-	void				PlayCycle					( int channel, const char *animname, int blendFrames );
-	bool				AnimDone					( int channel, int blendFrames );
-	bool				StartSound					( const char *soundName, const s_channelType channel, int soundShaderFlags, bool broadcast, int *length );
-	void				StopSound					( const s_channelType channel, bool broadcast );
-	rvClientEffect*		PlayEffect					( const char* effectName, jointHandle_t joint, bool loop = false, const idVec3& endOrigin = vec3_origin, bool broadcast = false );
+	void			PlayAnim				( int channel, const char *animname, int blendFrames );
+	void			PlayCycle				( int channel, const char *animname, int blendFrames );
+	bool			AnimDone				( int channel, int blendFrames );
+	bool			StartSound				( const char *soundName, const s_channelType channel, int soundShaderFlags, bool broadcast, int *length );
+	void			StopSound				( const s_channelType channel, bool broadcast );
+	rvClientEffect*		PlayEffect				( const char* effectName, jointHandle_t joint, bool loop = false, const idVec3& endOrigin = vec3_origin, bool broadcast = false );
 
-	void				FindViewModelPositionStyle	( idVec3& viewOffset, idAngles& viewAngles ) const;
+	void			FindViewModelPositionStyle	( idVec3& viewOffset, idAngles& viewAngles ) const;
 
 public:
 
-	void				InitLights					( void );
-	void				InitWorldModel				( void );
-	void				InitViewModel				( void );
-	void				InitDefs					( void );
+	void			InitLights				( void );
+	void			InitWorldModel				( void );
+	void			InitViewModel				( void );
+	void			InitDefs				( void );
 
-	void				FreeLight					( int lightID );
-	void				UpdateLight					( int lightID );
+	void			FreeLight				( int lightID );
+	void			UpdateLight				( int lightID );
 
-	void				UpdateMuzzleFlash			( void );
-	void				UpdateFlashlight			( void );	
+	void			UpdateMuzzleFlash			( void );
+	void			UpdateFlashlight			( void );	
 
-	void				UpdateGUI					( void );
-	void				UpdateCrosshairGUI			( idUserInterface* gui ) const;
+	void			UpdateGUI				( void );
+	void			UpdateCrosshairGUI			( idUserInterface* gui ) const;
 
-	idMat3				ForeshortenAxis				( const idMat3& axis ) const;
+	idMat3			ForeshortenAxis				( const idMat3& axis ) const;
 
 	// Script state management
 	struct weaponStateFlags_s {
-		bool		attack				:1;
-		bool		reload				:1;
-		bool		netReload			:1;
+		bool		attack			:1;
+		bool		reload			:1;
+		bool		netReload		:1;
 		bool		netEndReload		:1;
-		bool		raiseWeapon			:1;
-		bool		lowerWeapon			:1;
-		bool		flashlight			:1;
-		bool		zoom				:1;
+		bool		raiseWeapon		:1;
+		bool		lowerWeapon		:1;
+		bool		flashlight		:1;
+		bool		zoom			:1;
 	} wsfl;		
 	
 	// Generic flags
 	struct weaponFlags_s {
 		bool		attackAltHitscan	:1;
 		bool		attackHitscan		:1;
-		bool		hide				:1;
-		bool		disabled			:1;
+		bool		hide			:1;
+		bool		disabled		:1;
 		bool		hasBloodSplat		:1;
-		bool		silent_fire			:1;
+		bool		silent_fire		:1;
 		bool		zoomHideCrosshair	:1;
 		bool		flashlightOn		:1;
 		bool		hasWindupAnim		:1;
@@ -330,7 +334,7 @@ public:
 	jointHandle_t					flashlightJointWorld;
 	
 	weaponStatus_t					status;
-	int								lastAttack;
+	int						lastAttack;
 
 	// hiding weapon
 	int						hideTime;

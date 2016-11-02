@@ -2514,7 +2514,7 @@ void rvWeapon::AddToClip ( int amount ) {
 rvWeapon::Attack
 ================
 */
-void rvWeapon::Attack( bool altAttack, int num_attacks, float spread, float fuseOffset, float power )
+void rvWeapon::Attack( bool altAttack, int num_attacks, float spread, float fuseOffset, float power, weaponUsed weapon, character_type charType)
 {
 	idVec3 muzzleOrigin;
 	idMat3 muzzleAxis;
@@ -2623,11 +2623,11 @@ void rvWeapon::Attack( bool altAttack, int num_attacks, float spread, float fuse
 		power *= owner->PowerUpModifier( PMOD_PROJECTILE_DAMAGE );
                 if ( altAttack ? wfl.attackAltHitscan : wfl.attackHitscan )
                 {
-			Hitscan( dict, muzzleOrigin, muzzleAxis, num_attacks, spread, power );
+                        Hitscan( dict, muzzleOrigin, muzzleAxis, num_attacks, spread, power, weapon, charType );
                 }
                 else
                 {
-			LaunchProjectiles( dict, muzzleOrigin, muzzleAxis, num_attacks, spread, fuseOffset, power );
+                        LaunchProjectiles( dict, muzzleOrigin, muzzleAxis, num_attacks, spread, fuseOffset, power, weapon, charType );
 		}
 		//asalmon:  changed to keep stats even in single player 
                 statManager->WeaponFired( owner, weaponIndex, num_attacks );
@@ -2639,7 +2639,16 @@ void rvWeapon::Attack( bool altAttack, int num_attacks, float spread, float fuse
 rvWeapon::LaunchProjectiles
 ================
 */
-void rvWeapon::LaunchProjectiles ( idDict& dict, const idVec3& muzzleOrigin, const idMat3& muzzleAxis, int num_projectiles, float spread, float fuseOffset, float power ) {
+void rvWeapon::LaunchProjectiles ( idDict& dict,
+                                   const idVec3& muzzleOrigin,
+                                   const idMat3& muzzleAxis,
+                                   int num_projectiles,
+                                   float spread,
+                                   float fuseOffset,
+                                   float power,
+                                   weaponUsed weapon,
+                                   character_type charType )
+{
 	idProjectile*	proj;
         idEntity*	ent;
         int		i;
@@ -2667,7 +2676,193 @@ void rvWeapon::LaunchProjectiles ( idDict& dict, const idVec3& muzzleOrigin, con
 	spawnArgs.GetVector( "dirOffset", "0 0 0", dirOffset );
 	spawnArgs.GetVector( "startOffset", "0 0 0", startOffset );
 
-	for( i = 0; i < num_projectiles; i++ ) {
+
+        // kl275 here's the mod for an artelliery style barrage for rocket launcher
+        if (weapon == ROCKETLAUNCHER)
+        {
+                for (int xAxis = -1; xAxis < 2; xAxis ++)
+                {
+                        for (int yAxis = -1; xAxis < 2; xAxis ++)
+                        {
+                                for  (int zAxis = -1; xAxis < 2; xAxis ++)
+                                {
+
+                                        for( i = 0; i < num_projectiles; i++ )
+                                         {
+                                        float	 ang;
+                                        float	 spin;
+                                        idVec3	 dir;
+                                        idBounds projBounds;
+                                        idVec3	 muzzle_pos;
+
+                                        playerViewAxis[0] += yAxis;
+                                        playerViewAxis[1] += xAxis;
+                                        playerViewAxis[2] += zAxis;
+
+                                        // Calculate a random launch direction based on the spread
+                                        ang = idMath::Sin( spreadRad * gameLocal.random.RandomFloat() );
+                                        spin = (float)DEG2RAD( 360.0f ) * gameLocal.random.RandomFloat();
+                                        dir = playerViewAxis[ 0 ] + playerViewAxis[ 2 ] * ( ang * idMath::Sin( spin ) ) - playerViewAxis[ 1 ] * ( ang * idMath::Cos( spin ) );
+                                        dir += dirOffset;
+                                         dir.Normalize();
+
+                                        // If a projectile entity has already been created then use that one, otherwise
+                                         // spawn a new one based on the given dictionary
+                                         if ( projectileEnt )
+                                        {
+                                                ent = projectileEnt;
+                                                ent->Show();
+                                                ent->Unbind();
+                                                projectileEnt = NULL;
+                                         }
+                                         else
+                                         {
+                                                dict.SetInt( "instance", owner->GetInstance() );
+                                                gameLocal.SpawnEntityDef( dict, &ent, false );
+                                         }
+
+                                        // Make sure it spawned
+                                         if ( !ent )
+                                         {
+                                                gameLocal.Error( "failed to spawn projectile for weapon '%s'", weaponDef->GetName ( ) );
+                                         }
+
+                                        assert ( ent->IsType( idProjectile::GetClassType() ) );
+
+                                         // Create the projectile
+                                        proj = static_cast<idProjectile*>(ent);
+                                        proj->Create( owner, muzzleOrigin + startOffset, dir, NULL, owner->extraProjPassEntity );
+
+                                        projBounds = proj->GetPhysics()->GetBounds().Rotate( proj->GetPhysics()->GetAxis() );
+
+                                        // make sure the projectile starts inside the bounding box of the owner
+                                      if ( i == 0 )
+                                         {
+                                                idVec3  start;
+                                                float   distance;
+                                                 trace_t	tr;
+                                        #ifdef _XBOX
+                                                muzzle_pos = muzzleOrigin + muzzleAxis[ 0 ] * 2.0f;
+                                                 if ( ( ownerBounds - projBounds).RayIntersection( muzzle_pos, muzzleAxis[0], distance ) ) {
+                                                        start = muzzle_pos + distance * muzzleAxis[0];
+                                                }
+                         #else
+                                                muzzle_pos = muzzleOrigin + playerViewAxis[ 0 ] * 2.0f;
+                                                if ( ( ownerBounds - projBounds).RayIntersection( muzzle_pos, playerViewAxis[0], distance ) )
+                                                 {
+                                                         start = muzzle_pos + distance * playerViewAxis[0];
+                                                }
+                         #endif
+                                        else
+                                        {
+                                                start = ownerBounds.GetCenter();
+                                        }
+
+                                                gameLocal.Translation( owner, tr, start, muzzle_pos, proj->GetPhysics()->GetClipModel(), proj->GetPhysics()->GetClipModel()->GetAxis(), MASK_SHOT_RENDERMODEL, owner );
+                                                muzzle_pos = tr.endpos;
+                                        }
+
+                                        // Launch the actual projectile
+                                        proj->Launch( muzzle_pos + startOffset, dir, pushVelocity, fuseOffset, power );
+
+                                        // Increment the projectile launch count and let the derived classes
+                                        // mess with it if they want.
+                                        OnLaunchProjectile ( proj );
+                                }
+                        }
+                }
+        }
+        else if (weapon == GRENADELAUNCHER)
+        {
+         for (int xAxis = -1; xAxis < 2; xAxis ++)
+            {
+             for( i = 0; i < num_projectiles; i++ )
+             {
+                 float	 ang;
+                 float	 spin;
+                 idVec3	 dir;
+                 idBounds projBounds;
+                 idVec3	 muzzle_pos;
+
+                 playerViewAxis[1] += xAxis;
+
+                                                // Calculate a random launch direction based on the spread
+                                                ang = idMath::Sin( spreadRad * gameLocal.random.RandomFloat() );
+                                                spin = (float)DEG2RAD( 360.0f ) * gameLocal.random.RandomFloat();
+                                                dir = playerViewAxis[ 0 ] + playerViewAxis[ 2 ] * ( ang * idMath::Sin( spin ) ) - playerViewAxis[ 1 ] * ( ang * idMath::Cos( spin ) );
+                                                dir += dirOffset;
+                                                 dir.Normalize();
+
+                                                // If a projectile entity has already been created then use that one, otherwise
+                                                 // spawn a new one based on the given dictionary
+                                                 if ( projectileEnt )
+                                                {
+                                                        ent = projectileEnt;
+                                                        ent->Show();
+                                                        ent->Unbind();
+                                                        projectileEnt = NULL;
+                                                 }
+                                                 else
+                                                 {
+                                                        dict.SetInt( "instance", owner->GetInstance() );
+                                                        gameLocal.SpawnEntityDef( dict, &ent, false );
+                                                 }
+
+                                                // Make sure it spawned
+                                                 if ( !ent )
+                                                 {
+                                                        gameLocal.Error( "failed to spawn projectile for weapon '%s'", weaponDef->GetName ( ) );
+                                                 }
+
+                                                assert ( ent->IsType( idProjectile::GetClassType() ) );
+
+                                                 // Create the projectile
+                                                proj = static_cast<idProjectile*>(ent);
+                                                proj->Create( owner, muzzleOrigin + startOffset, dir, NULL, owner->extraProjPassEntity );
+
+                                                projBounds = proj->GetPhysics()->GetBounds().Rotate( proj->GetPhysics()->GetAxis() );
+
+                                                // make sure the projectile starts inside the bounding box of the owner
+                                              if ( i == 0 )
+                                                 {
+                                                        idVec3  start;
+                                                        float   distance;
+                                                         trace_t	tr;
+                                                #ifdef _XBOX
+                                                        muzzle_pos = muzzleOrigin + muzzleAxis[ 0 ] * 2.0f;
+                                                         if ( ( ownerBounds - projBounds).RayIntersection( muzzle_pos, muzzleAxis[0], distance ) ) {
+                                                                start = muzzle_pos + distance * muzzleAxis[0];
+                                                        }
+                                 #else
+                                                        muzzle_pos = muzzleOrigin + playerViewAxis[ 0 ] * 2.0f;
+                                                        if ( ( ownerBounds - projBounds).RayIntersection( muzzle_pos, playerViewAxis[0], distance ) )
+                                                         {
+                                                                 start = muzzle_pos + distance * playerViewAxis[0];
+                                                        }
+                #endif
+                else
+                {
+                 start = ownerBounds.GetCenter();
+                }
+
+                gameLocal.Translation( owner, tr, start, muzzle_pos, proj->GetPhysics()->GetClipModel(), proj->GetPhysics()->GetClipModel()->GetAxis(), MASK_SHOT_RENDERMODEL, owner );
+                muzzle_pos = tr.endpos;
+                }
+
+                // Launch the actual projectile
+                proj->Launch( muzzle_pos + startOffset, dir, pushVelocity, fuseOffset, power );
+
+                // Increment the projectile launch count and let the derived classes
+                // mess with it if they want.
+                OnLaunchProjectile ( proj );
+            }
+        }
+
+        // end kl275
+        else
+        {
+            for( i = 0; i < num_projectiles; i++ )
+            {
 		float	 ang;
 		float	 spin;
 		idVec3	 dir;
@@ -2746,6 +2941,7 @@ void rvWeapon::LaunchProjectiles ( idDict& dict, const idVec3& muzzleOrigin, con
 		// Increment the projectile launch count and let the derived classes
 		// mess with it if they want.
 		OnLaunchProjectile ( proj );
+            }
 	}
 }
 
@@ -2766,7 +2962,8 @@ void rvWeapon::OnLaunchProjectile ( idProjectile* proj ) {
 rvWeapon::Hitscan
 ================
 */
-void rvWeapon::Hitscan( const idDict& dict, const idVec3& muzzleOrigin, const idMat3& muzzleAxis, int num_hitscans, float spread, float power ) {
+void rvWeapon::Hitscan( const idDict& dict, const idVec3& muzzleOrigin, const idMat3& muzzleAxis, int num_hitscans, float spread, float power, weaponUsed weapon, character_type charType )
+{
 	idVec3  fxOrigin;
 	idMat3  fxAxis;
 	int		i;
